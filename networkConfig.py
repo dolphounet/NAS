@@ -56,7 +56,7 @@ def OSPF_if(file, tn, network, interface):
 
 
 def OSPF(file, tn, network, router):
-    routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
+    routerId = 3 * (router + ".") + router
     writeLine(file, tn, "router ospf 10")
     writeLine(file, tn, f"router-id {routerId}")
     passive_if(file, tn, network, router)
