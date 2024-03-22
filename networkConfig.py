@@ -71,8 +71,8 @@ def MPLS(file, tn):
     writeLine(file, tn, "mpls ip")
     writeLine(file, tn, "mpls label protocol ldp")    
 
-def MPLS_if(file, tn, interface, address, mask):
-    writeLine(file, tn, "ip address {address} {mask}")
+def MPLS_if(file, tn, interface):
+    writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
     
     
 def BGP(file, tn, network, router):
@@ -89,7 +89,6 @@ def BGP(file, tn, network, router):
     for rtr in network["routers"]:
         neighbor = rtr["ID"][0]
         if neighbor != router:
-
             # iBGP
             if (
                 network["routers"][neighbor - 1]["AS"]
@@ -286,7 +285,7 @@ def config_router(network, routerID):
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
         if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
-            MPLS(file, tn, network, routerID)
+            MPLS(file, tn)
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 addressing_if(file, tn, interface)
