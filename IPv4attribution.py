@@ -128,7 +128,24 @@ def BitsToDecimal(bits):
     return (f"{decimal}")
 
 
+def attributeRD(network):
+    RD_Dic = {}
 
+    for AS in network["AS"]:
+        RD_Dic[AS["ASname"]]=0
+    for router in network["routers"]:
+        RD_Dic[router["AS"]]+=1
+        router["RD"]=f"{router['AS']}:{router['ID'][0]}"
+    
+
+
+    print(RD_Dic)
+    print (network.items())
+            
+        
+
+     
+    
 def attributeIP(network):
 
     findAdjacency(network)
