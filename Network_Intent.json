@@ -278,5 +278,18 @@
                 "Peer" : 100,
                 "Provider" : 50
             }
-        }
+        },
+
+    "Clients" :
+        [
+            {
+                "ClientID" : 1,
+                "ASList" : [2,3]
+            },
+            {
+                "ClientID" : 2,
+                "ASList" : [4,5]
+            }
+
+        ]
 }
