@@ -42,8 +42,6 @@ def OSPF(file, tn, network, router):
     passive_if(file, tn, network, router)
     writeLine(file, tn, f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}")
     writeLine(file, tn, "exit")
-    
-def MPLS    
 
 def BGP(file, tn, network, router):
     """
@@ -169,18 +167,12 @@ def config_router(network, routerID):
         for interface in network["routers"][routerID-1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 addressing_if(file, tn, interface)
-                if "RIP" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
-                    RIP_if(file, tn, network, routerID, interface)
-
                 if "OSPF" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
                     OSPF_if(file, tn, network,interface)
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
         
         BGP(file, tn, network, routerID)
-
-        if "RIP" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
-            RIP(file, tn)
 
         if "OSPF" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
             OSPF(file, tn, network, routerID)
