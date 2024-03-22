@@ -134,7 +134,14 @@ def slashToMask(slash):
     return mask
 
 
-#def adressesLeft(IP,mask):
+def adressesLeft(mask):
+    #nombre d'adresses dispo par carré
+    Nb_adresses = [0,0,0,0]
+    Nb_adresses[0] = 255- int(mask[:3])
+    Nb_adresses[1] = 255 - int(mask[4:7])
+    Nb_adresses[2] = 255 - int(mask[8:11])
+    Nb_adresses[3] = 255 - int(mask[12:15])
+    return Nb_adresses
 
 
 def BitsToDecimal(bits):
@@ -145,3 +152,5 @@ def BitsToDecimal(bits):
     return (f"{decimal}")
 
 #print(BitsToDecimal("11110111"))
+print(slashToMask(22))
+print(adressesLeft(slashToMask(22)))
