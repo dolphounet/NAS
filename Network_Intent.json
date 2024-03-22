@@ -209,8 +209,8 @@
     "AS" : [
         {
             "ASname": 1,
-            "networkIP": ["2001:200:200:10::","/64"],
-            "loopbackNetworkIP": ["2001:200:200:11::","/64"],
+            "networkIP": ["192.168.1.0","/24"],
+            "loopbackNetworkIP": ["10.0.10.0","/24"],
             "IGP": ["RIP"],
             "relations" : {
                 "2" : "Client",
@@ -219,8 +219,8 @@
         },
         {
             "ASname": 2,
-            "networkIP": ["2001:200:200:20::","/64"],
-            "loopbackNetworkIP": ["2001:200:200:21::","/64"],
+            "networkIP": ["192.168.2.0","/24"],
+            "loopbackNetworkIP": ["10.0.20.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
                 "1" : "Provider",
@@ -230,8 +230,8 @@
         },
         {
             "ASname": 3,
-            "networkIP": ["2001:200:200:30::","/64"],
-            "loopbackNetworkIP": ["2001:200:200:31::","/64"],
+            "networkIP": ["192.168.3.0","/24"],
+            "loopbackNetworkIP": ["10.0.30.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
                 "1" : "Provider",
@@ -241,8 +241,8 @@
         },
         {
             "ASname": 4,
-            "networkIP": ["2001:200:200:40::","/64"],
-            "loopbackNetworkIP": ["2001:200:200:41::","/64"],
+            "networkIP": ["192.168.4.0","/24"],
+            "loopbackNetworkIP": ["10.0.40.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
                 "2" : "Provider"
@@ -250,8 +250,8 @@
         },
         {
             "ASname": 5,
-            "networkIP": ["2001:200:200:50::","/64"],
-            "loopbackNetworkIP": ["2001:200:200:51::","/64"],
+            "networkIP": ["192.168.5.0","/24"],
+            "loopbackNetworkIP": ["10.0.50.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
                 "3" : "Provider"
@@ -261,7 +261,7 @@
 
     "InterAS" : 
         {
-            "networkIP": ["5000::","/16"]
+            "networkIP": ["100.100.0.0","/16"]
         },
 
     "Constants" :
