@@ -279,16 +279,16 @@
                 "Provider" : 50
             }
         },
-        
+
     "Clients" :
         [
             {
-                "ClientID" : 0,
-                "AS List" : [2,3]
+                "ClientID" : 1,
+                "ASList" : [2,3]
             },
             {
-                "ClientID" : 1,
-                "AS List" : [4,5]
+                "ClientID" : 2,
+                "ASList" : [4,5]
             }
 
         ]
