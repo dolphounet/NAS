@@ -1,5 +1,5 @@
 from filesIO import readJson
-from IPv4attribution import attributeIP
+from IPv4attribution import attributeIP,attributeRT
 from networkConfig import config_router
 import threading
 
@@ -12,6 +12,7 @@ def main():
 
     # Attribution des IP
     attributeIP(network)
+    attributeRT(network)
     print()
     print(network["InterAS"]["InterASlinks"])
 
