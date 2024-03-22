@@ -11,14 +11,18 @@ def writeLine(file, tn, line):
 
 def border_router(network, router):
     for interface in network["routers"][router - 1]["interface"]:
-        if (
+        if border_interface(network, router, interface) :
+            return True
+    return False
+
+def border_interface(network, router, interface):
+    if (
             interface["neighbor"] != []
             and network["routers"][interface["neighbor"][0] - 1]["AS"]
             != network["routers"][router - 1]["AS"]
         ):
             return True
     return False
-
 
 def belongs_to_subNet(network, router, subNet):
     return subNet in network["routers"][router - 1]["subNets"]
@@ -62,8 +66,15 @@ def OSPF(file, tn, network, router):
         f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}",
     )
     writeLine(file, tn, "exit")
+    
+def MPLS(file, tn):
+    writeLine(file, tn, "mpls ip")
+    writeLine(file, tn, "mpls label protocol ldp")    
 
-
+def MPLS_if(file, tn, interface):
+    writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
+    
+    
 def BGP(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
@@ -78,7 +89,6 @@ def BGP(file, tn, network, router):
     for rtr in network["routers"]:
         neighbor = rtr["ID"][0]
         if neighbor != router:
-
             # iBGP
             if (
                 network["routers"][neighbor - 1]["AS"]
@@ -135,6 +145,7 @@ def BGP(file, tn, network, router):
                         f"network {''.join(subNet)} route-map {network['routers'][router-1]['AS']}_Client_in",
                     )
             once = True
+       
 
     # eBGP
     for neighbor_address, neighborID in neighbor_addresses["eBGP"]:
@@ -274,7 +285,7 @@ def config_router(network, routerID):
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
         if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
-            writeLine(file, tn , "mpls ip")
+            MPLS(file, tn)
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 addressing_if(file, tn, interface)
@@ -284,10 +295,20 @@ def config_router(network, routerID):
                     in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]
                 ):
                     OSPF_if(file, tn, network, interface)
+                
+                if (
+                    "MPLS"
+                    in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]
+                    and
+                    not border_interface(network, routerID, interface)
+                ):
+                    MPLS_if(network, routerID, interface)
+                
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
-        BGP(file, tn, network, routerID)
+        if border_router(network, routerID):
+            BGP(file, tn, network, routerID)
 
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
