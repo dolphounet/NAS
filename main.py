@@ -1,7 +1,8 @@
 from filesIO import readJson
-from IPv4attribution import attributeIP
+from IPv4attribution import attributeIP, attributeRD
 from networkConfig import config_router
 import threading
+
 
 
 
@@ -14,6 +15,7 @@ def main():
     attributeIP(network)
     print()
     print(network["InterAS"]["InterASlinks"])
+    attributeRD(network)
 
     '''
     # Ecriture de la configuration avec telnet

@@ -48,7 +48,7 @@ def createLinks(network):
     for j in range(0,len(ASlinks)):
         for k in range(0,ASlinks[j]["Count"]):
             Subnet = network["AS"][j]["networkIP"][0]
-            network["AS"][j]["subNets"].append([calcSubnet(Subnet,j*4,network["AS"][j]["networkIP"][1]),slashToMask(30)])
+            network["AS"][j]["subNets"].append([calcSubnet(Subnet,k*4,network["AS"][j]["networkIP"][1]),slashToMask(30)])
     
     for router in network["routers"]:
         ASlinks[router["AS"]-1]["RouterList"].append(router["ID"][0])
@@ -81,7 +81,7 @@ def calcIP(subnet,nb):
     netIP = subnet.split(".")
     netIP[3] = str(int(netIP[3])+nb)
     IP = ".".join(netIP)
-    return
+    return IP
 
 def slashToMask(slash):
     zero_bits = 32-slash
@@ -120,7 +120,24 @@ def BitsToDecimal(bits):
     return (f"{decimal}")
 
 
+def attributeRD(network):
+    RD_Dic = {}
 
+    for AS in network["AS"]:
+        RD_Dic[AS["ASname"]]=0
+    for router in network["routers"]:
+        RD_Dic[router["AS"]]+=1
+        router["RD"]=f"{router['AS']}:{router['ID'][0]}"
+    
+
+
+    print(RD_Dic)
+    print (network.items())
+            
+        
+
+     
+    
 def attributeIP(network):
 
     findAdjacency(network)
