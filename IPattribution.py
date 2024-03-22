@@ -13,7 +13,6 @@ def findAdjacency(network):
 
     network["adjDic"] = adjDic
 
-
 def createLinks(network):
     # Crée les dictionnaires contenants les liens, le nb de liens et la liste des routeurs concernés
 
