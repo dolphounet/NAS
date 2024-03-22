@@ -13,16 +13,6 @@ def findAdjacency(network):
 
     network["adjDic"] = adjDic
 
-def calcSubnet(networkIP,count,mask):
-
-    netIP = networkIP.split(".")
-    subnet = str( int(networkIP[3])+4)
-
-    return
-
-def calcIP(subnet,count,):
-    return
-
 def createLinks(network):
     # Crée les dictionnaires contenants les liens, le nb de liens et la liste des routeurs concernés
 
@@ -49,14 +39,16 @@ def createLinks(network):
 
     for l in range(0,InterASlinks["Count"]):
         Subnet = network["InterAS"]["networkIP"][0]
-        network["InterAS"]["subNets"].append([Subnet[:len(Subnet)-1] + str(l+1) + "::","/"+str(int(network["InterAS"]["networkIP"][1][1:])+16)])
+        network["InterAS"]["subNets"].append([calcSubnet(Subnet,l*4,network["InterAS"]["networkIP"][1]),slashToMask(30)])
+        
+    print(network["InterAS"]["subNets"])
 
     # Gestion des addresses des routeurs des AS
 
     for j in range(0,len(ASlinks)):
         for k in range(0,ASlinks[j]["Count"]):
             Subnet = network["AS"][j]["networkIP"][0]
-            network["AS"][j]["subNets"].append([Subnet[:len(Subnet)-1] + str(k+1) + "::","/"+str(int(network["AS"][j]["networkIP"][1][1:])+16)])
+            network["AS"][j]["subNets"].append([calcSubnet(Subnet,j*4,network["AS"][j]["networkIP"][1]),slashToMask(30)])
     
     for router in network["routers"]:
         ASlinks[router["AS"]-1]["RouterList"].append(router["ID"][0])
@@ -70,51 +62,27 @@ def createLinks(network):
         loopbackRouterAdd = 1
 
         for routerID in ASlinks[i]["RouterList"]:
-            loopback = {"name": "Loopback1","neighbor" : [], "metricOSPF" : "", "address" : [loopbackNetIP[:len(loopbackNetIP)-1] + str(loopbackRouterAdd) + "::","/128"]}
+            loopback = {"name": "Loopback1","neighbor" : [], "metricOSPF" : "", "address" : [calcSubnet(loopbackNetIP,loopbackRouterAdd,"/8"),slashToMask(32)]}
             network["routers"][routerID-1]["interface"].append(loopback)
             loopbackRouterAdd += 1
 
     return ASlinks,InterASlinks
 
-def attributeIP(network):
+def calcSubnet(networkIP,count,mask):
 
-    findAdjacency(network)
-    ASlinks,InterASlinks = createLinks(network)
+    netIP = networkIP.split(".")
+    netIP[3] = str(int(netIP[3])+count)
+    IP = ".".join(netIP)
+    print(IP)
 
-    # Gestion pour un AS
-    for i in range(0,len(ASlinks)):
-        for j in range(0,len(ASlinks[i]["Links"])):
-            currentNet = network["AS"][i]["subNets"][j][0]
-            (ID1,ID2) = ASlinks[i]["Links"][j]
+    return IP
 
-            for interface in network["routers"][ID1-1]["interface"]:
-                if interface["neighbor"] != [] and interface["neighbor"] == [ID2] :
-                    interface["address"] = [currentNet+"1",network["AS"][i]["subNets"][j][1]]
-                    network["routers"][ID1-1]["subNets"].append([currentNet,network["AS"][i]["subNets"][j][1]])
-                    
-            for interface in network["routers"][ID2-1]["interface"]:
-                if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
-                    interface["address"] = [currentNet+"2",network["AS"][i]["subNets"][j][1]]
-                    network["routers"][ID2-1]["subNets"].append([currentNet,network["AS"][i]["subNets"][j][1]])
+def calcIP(subnet,nb):
+    netIP = subnet.split(".")
+    netIP[3] = str(int(netIP[3])+nb)
+    IP = ".".join(netIP)
+    return
 
-    # Gestion pour les InterAS
-    for k in range(0,len(InterASlinks["Links"])):
-        currentNet = network["InterAS"]["subNets"][k][0]
-        ID1,ID2 = list(InterASlinks["Links"].keys())[k]
-        InterASlinks["Links"][(ID1,ID2)] = ([currentNet+"1",network["InterAS"]["subNets"][k][1]],[currentNet+"2",network["InterAS"]["subNets"][k][1]])
-
-        for interface in network["routers"][ID1-1]["interface"]:
-            if interface["neighbor"] != [] and interface["neighbor"] == [ID2] :
-                interface["address"] = [currentNet+"1",network["InterAS"]["subNets"][k][1]]
-                network["routers"][ID1-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])         
-                    
-        for interface in network["routers"][ID2-1]["interface"]:
-            if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
-                interface["address"] = [currentNet+"2",network["InterAS"]["subNets"][k][1]]
-                network["routers"][ID2-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])
-
-    network["InterAS"]["InterASlinks"] = InterASlinks
-    
 def slashToMask(slash):
     zero_bits = 32-slash
     one_bits = 32 - zero_bits
@@ -133,10 +101,6 @@ def slashToMask(slash):
     mask += BitsToDecimal(bits[24:32])
     return mask
 
-
-#def adressesLeft(IP,mask):
-
-
 def BitsToDecimal(bits):
     decimal=0
     for i in range(len(bits)):
@@ -144,4 +108,44 @@ def BitsToDecimal(bits):
             decimal +=2**(len(bits)-(i+1))
     return (f"{decimal}")
 
-#print(BitsToDecimal("11110111"))
+
+
+def attributeIP(network):
+
+    findAdjacency(network)
+    ASlinks,InterASlinks = createLinks(network)
+
+    # Gestion pour un AS
+    for i in range(0,len(ASlinks)):
+        for j in range(0,len(ASlinks[i]["Links"])):
+            currentNet = network["AS"][i]["subNets"][j][0]
+            (ID1,ID2) = ASlinks[i]["Links"][j]
+
+            for interface in network["routers"][ID1-1]["interface"]:
+                if interface["neighbor"] != [] and interface["neighbor"] == [ID2] :
+                    interface["address"] = [calcIP(currentNet,1),network["AS"][i]["subNets"][j][1]]
+                    network["routers"][ID1-1]["subNets"].append([currentNet,network["AS"][i]["subNets"][j][1]])
+                    
+            for interface in network["routers"][ID2-1]["interface"]:
+                if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
+                    interface["address"] = [calcIP(currentNet,2),network["AS"][i]["subNets"][j][1]]
+                    network["routers"][ID2-1]["subNets"].append([currentNet,network["AS"][i]["subNets"][j][1]])
+
+    # Gestion pour les InterAS
+    for k in range(0,len(InterASlinks["Links"])):
+        currentNet = network["InterAS"]["subNets"][k][0]
+        ID1,ID2 = list(InterASlinks["Links"].keys())[k]
+        InterASlinks["Links"][(ID1,ID2)] = ([calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]],[calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]])
+
+        for interface in network["routers"][ID1-1]["interface"]:
+            if interface["neighbor"] != [] and interface["neighbor"] == [ID2] :
+                interface["address"] = [calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]]
+                network["routers"][ID1-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])         
+                    
+        for interface in network["routers"][ID2-1]["interface"]:
+            if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
+                interface["address"] = [calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]]
+                network["routers"][ID2-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])
+
+    network["InterAS"]["InterASlinks"] = InterASlinks
+    
