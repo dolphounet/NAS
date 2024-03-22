@@ -273,6 +273,8 @@ def config_router(network, routerID):
         writeLine(file, tn, "")  # To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
+        if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
+            writeLine(file, tn , "mpls ip")
         if network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             writeLine(file, tn, "mpls ip")
         for interface in network["routers"][routerID - 1]["interface"]:
