@@ -74,6 +74,23 @@ def MPLS(file, tn):
 def MPLS_if(file, tn, interface):
     writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
     
+
+def VRF(file, tn, network, router):
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface :
+            router_client = interface["neighbor"][0]
+            RD = network["routers"][router_client - 1]["rd"]
+            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1]["clientId"]  
+            RT = network["Clients"][clientId - 1]["RT"]
+            
+            writeLine(file, tn, f"vrf definition Client_{clientId}")
+            writeLine(file, tn, f"rd {RD}")
+            writeLine(file, tn, f"route-target export {RT}")
+            writeLine(file, tn, f"route-target import {RT}")
+            writeLine(file, tn, "address-family ipv4")
+            writeLine(file, tn, "exit-address-family")
+            writeLine(file, tn, "exit")
+    
     
 def BGP(file, tn, network, router):
     """
@@ -308,6 +325,7 @@ def config_router(network, routerID):
                 writeLine(file, tn, "exit")
 
         if border_router(network, routerID):
+            VRF(file, tn, network, routerID)
             BGP(file, tn, network, routerID)
 
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
