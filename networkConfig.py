@@ -22,13 +22,12 @@ def addressing_if(file, tn, interface):
     writeLine(file, tn, "ipv6 enable")
     writeLine(file, tn, f"ipv6 address {address}")
 
-
 def passive_if(file, tn, network, router):
     for interface in network["routers"][router-1]["interface"]:
         if interface["neighbor"] != [] and network["routers"][interface["neighbor"][0]-1]["AS"] != network["routers"][router-1]["AS"]:
             writeLine(file, tn, f"passive-interface {interface['name']}")
 
-def OSPF_if(file, tn, network,interface):
+def OSPF_if(file, tn, network, interface):
     writeLine(file, tn, "ipv6 ospf 10 area 0")
     for interfaceType in network["Constants"]["Bandwith"]:
         if interfaceType in interface["name"] and interfaceType != "Reference":
@@ -43,15 +42,8 @@ def OSPF(file, tn, network, router):
     passive_if(file, tn, network, router)
     writeLine(file, tn, f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}")
     writeLine(file, tn, "exit")
-
-def RIP_if(file, tn, network, router, interface):
-    if interface["name"] == "Loopback1" or network["routers"][interface["neighbor"][0]-1]["AS"] == network["routers"][router-1]["AS"]:
-        writeLine(file, tn, "ipv6 rip BeginRIP enable")
-
-def RIP(file, tn):
-    writeLine(file, tn, "ipv6 router rip BeginRIP")
-    writeLine(file, tn, "redistribute connected")
-    writeLine(file, tn, "exit")
+    
+def MPLS    
 
 def BGP(file, tn, network, router):
     """
@@ -174,7 +166,6 @@ def config_router(network, routerID):
         writeLine(file, tn, "") #To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete") #Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
-        writeLine(file, tn, "ipv6 unicast-routing")
         for interface in network["routers"][routerID-1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 addressing_if(file, tn, interface)
