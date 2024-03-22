@@ -274,7 +274,7 @@ def config_router(network, routerID):
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
         if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
-            writeLine(file, tn , "mpls ip")
+            writeLine(file, tn, "mpls ip")
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 addressing_if(file, tn, interface)
@@ -287,7 +287,8 @@ def config_router(network, routerID):
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
-        BGP(file, tn, network, routerID)
+        if border_router(network, routerID):
+            BGP(file, tn, network, routerID)
 
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
