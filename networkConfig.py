@@ -32,7 +32,6 @@ def belongs_to_subNet(network, router, subNet):
 
 def addressing_if(file, tn, interface):
     address = " ".join(interface["address"])
-    writeLine(file, tn, f"interface {interface['name']}")
     writeLine(file, tn, f"ip address {address}")
 
 
@@ -63,9 +62,7 @@ def MPLS(file, tn):
 
 
 def MPLS_if(file, tn, interface):
-    writeLine(
-        file, tn, f"ip address {interface['address'][0]} {interface['address'][1]}"
-    )
+    writeLine(file, tn, f"mpls ip")
 
 
 def VRF(file, tn, network, router):
@@ -193,10 +190,16 @@ def config_router(network, routerID):
         writeLine(file, tn, "")  # To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
+        if (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] == 1
+        ):
+            VRF(file, tn, network, routerID)
         if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             MPLS(file, tn)
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
+                writeLine(file, tn, f"interface {interface['name']}")
                 if border_interface(network, routerID, interface):
                     router_client = interface["neighbor"][0]
                     writeLine(
@@ -223,7 +226,6 @@ def config_router(network, routerID):
             border_router(network, routerID)
             and network["routers"][routerID - 1]["AS"] == 1
         ):
-            VRF(file, tn, network, routerID)
             BGP_Coeur(file, tn, network, routerID)
 
         elif (
