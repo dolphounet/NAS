@@ -85,6 +85,13 @@ def calcSubnet(networkIP,count,mask):
     netIP = networkIP.split(".")
     netIP[3] = str(int(netIP[3])+count)
     IP = ".".join(netIP)
+    if netIP[3]+count > 255 : 
+        modulo = int(count/255)
+        if adressesLeft(mask)[2] > 0:
+            count = count - 255*modulo
+            netIP[3] = str(int(netIP[3])+count)
+            netIP[2] = str(int(netIP[2])+modulo)
+
     return IP
 
 def calcIP(subnet,nb):
