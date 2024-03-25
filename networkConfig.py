@@ -77,16 +77,18 @@ def MPLS(file, tn):
 
 def MPLS_if(file, tn, interface):
     writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
-    
+
 
 def VRF(file, tn, network, router):
     for interface in network["routers"][router - 1]["interface"]:
-        if border_interface :
+        if border_interface(network, router, interface):
             router_client = interface["neighbor"][0]
             RD = network["routers"][router_client - 1]["rd"]
-            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1]["clientId"]  
+            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
+                "clientId"
+            ]
             RT = network["Clients"][clientId - 1]["RT"]
-            
+
             writeLine(file, tn, f"vrf definition Client_{clientId}")
             writeLine(file, tn, f"rd {RD}")
             writeLine(file, tn, f"route-target export {RT}")
@@ -94,8 +96,8 @@ def VRF(file, tn, network, router):
             writeLine(file, tn, "address-family ipv4")
             writeLine(file, tn, "exit-address-family")
             writeLine(file, tn, "exit")
-    
-    
+
+
 def BGP(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
@@ -120,113 +122,31 @@ def BGP(file, tn, network, router):
                 f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}",
             )
             writeLine(file, tn, f"neighbor {neighbor_address} update-source Loopback1")
-            neighbor_addresses["iBGP"].append((neighbor_address, neighbor))
+            neighbor_addresses["iBGP"].append(neighbor_address)
 
     writeLine(file, tn, "address-family vpnv4")
     # iBGP
-    for neighbor_address, neighborID in neighbor_addresses["iBGP"]:
+    for neighbor_address in neighbor_addresses["iBGP"]:
         writeLine(file, tn, f"neighbor {neighbor_address} activate")
-        writeLine(file, tn, f"neighbor {neighbor_address} send-community both")
+        writeLine(file, tn, f"neighbor {neighbor_address} send-community extended")
 
     writeLine(file, tn, "exit-address-family")
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
+            router_client = interface["neighbor"][0]
+            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
+                "clientId"
+            ]
+            neighbor_address = network["Clients"][clientId - 1]["address"][0]
+            writeLine(file, tn, "address-family ipv4 vrf Client_" + str(clientId))
+            writeLine(
+                file,
+                tn,
+                f"neighbor {neighbor_address} remote-as {network['routers'][router_client-1]['AS']}",
+            )
+            writeLine(file, tn, f"neighbor {neighbor_address} activate")
+
     writeLine(file, tn, "exit")
-
-
-def BGP_Border(file, tn, network, router, neighbor_address, neighborID):
-
-    # Application des route-map
-    neighborType = network["AS"][network["routers"][router - 1]["AS"] - 1]["relations"][
-        str(network["routers"][neighborID - 1]["AS"])
-    ]
-    writeLine(
-        file,
-        tn,
-        f"neighbor {neighbor_address} route-map {network['routers'][router-1]['AS']}_{neighborType}_in in",
-    )
-    # Route-map out
-    writeLine(
-        file,
-        tn,
-        f"neighbor {neighbor_address} route-map {network['routers'][router-1]['AS']}_{neighborType}_out out",
-    )
-
-
-def BGP_CommunityLists(file, tn, network, router):
-    writeLine(
-        file,
-        tn,
-        f"ipv6 route {network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][0]}{network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][1]} Null0",
-    )
-    writeLine(file, tn, "ip bgp-community new-format")
-
-    for relation in network["Constants"]["LocPref"]:
-        if relation != "Client":
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Client']}",
-            )
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} deny {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Peer']}",
-            )
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} deny {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Provider']}",
-            )
-
-        elif relation == "Client":
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Client']}",
-            )
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Peer']}",
-            )
-            writeLine(
-                file,
-                tn,
-                f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Provider']}",
-            )
-
-
-def BGP_Routemap(file, tn, network, router):
-
-    # In route-map
-    for relation in network["Constants"]["LocPref"]:
-        writeLine(
-            file,
-            tn,
-            f"route-map {network['routers'][router-1]['AS']}_{relation}_in permit {int(network['Constants']['LocPref'][relation]/10)}",
-        )
-        writeLine(
-            file,
-            tn,
-            f"set local-preference {network['Constants']['LocPref'][relation]}",
-        )
-        writeLine(
-            file,
-            tn,
-            f"set community {network['routers'][router-1]['AS']}:{network['Constants']['LocPref'][relation]}",
-        )
-        writeLine(file, tn, "exit")
-
-    # Out route-map
-    for relation in network["Constants"]["LocPref"]:
-        writeLine(
-            file,
-            tn,
-            f"route-map {network['routers'][router-1]['AS']}_{relation}_out permit {int(network['Constants']['LocPref'][relation]/10)}",
-        )
-        writeLine(
-            file, tn, f"match community {network['Constants']['LocPref'][relation]}"
-        )
-        writeLine(file, tn, "exit")
 
 
 def config_router(network, routerID):
