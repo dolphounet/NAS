@@ -11,18 +11,20 @@ def writeLine(file, tn, line):
 
 def border_router(network, router):
     for interface in network["routers"][router - 1]["interface"]:
-        if border_interface(network, router, interface) :
+        if border_interface(network, router, interface):
             return True
     return False
 
+
 def border_interface(network, router, interface):
     if (
-            interface["neighbor"] != []
-            and network["routers"][interface["neighbor"][0] - 1]["AS"]
-            != network["routers"][router - 1]["AS"]
-        ):
-            return True
+        interface["neighbor"] != []
+        and network["routers"][interface["neighbor"][0] - 1]["AS"]
+        != network["routers"][router - 1]["AS"]
+    ):
+        return True
     return False
+
 
 def belongs_to_subNet(network, router, subNet):
     return subNet in network["routers"][router - 1]["subNets"]
@@ -66,13 +68,16 @@ def OSPF(file, tn, network, router):
         f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}",
     )
     writeLine(file, tn, "exit")
-    
+
+
 def MPLS(file, tn):
     writeLine(file, tn, "mpls ip")
-    writeLine(file, tn, "mpls label protocol ldp")    
+    writeLine(file, tn, "mpls label protocol ldp")
+
 
 def MPLS_if(file, tn, interface):
     writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
+<<<<<<< HEAD
     
 
 def VRF(file, tn, network, router):
@@ -92,6 +97,10 @@ def VRF(file, tn, network, router):
             writeLine(file, tn, "exit")
     
     
+=======
+
+
+>>>>>>> 75669d6 (started bgp)
 def BGP(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
@@ -101,88 +110,29 @@ def BGP(file, tn, network, router):
     neighbor_addresses = {"iBGP": [], "eBGP": []}
 
     writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
-    writeLine(file, tn, "no bgp default ipv4-unicast")
     writeLine(file, tn, f"bgp router-id {routerId}")
     for rtr in network["routers"]:
         neighbor = rtr["ID"][0]
-        if neighbor != router:
+        if rtr["AS"] == network["routers"][router - 1]["AS"] and neighbor != router:
             # iBGP
-            if (
-                network["routers"][neighbor - 1]["AS"]
-                == network["routers"][router - 1]["AS"]
-            ):
-                for interface in network["routers"][neighbor - 1]["interface"]:
-                    if "Loopback" in interface["name"]:
-                        neighbor_address = interface["address"][0]
-                        break
-                writeLine(
-                    file,
-                    tn,
-                    f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}",
-                )
-                writeLine(
-                    file, tn, f"neighbor {neighbor_address} update-source Loopback1"
-                )
-                neighbor_addresses["iBGP"].append((neighbor_address, neighbor))
-
-            # eBGP
-            elif neighbor in network["adjDic"][router]:
-                for interface in network["routers"][neighbor - 1]["interface"]:
-                    if router in interface["neighbor"]:
-                        neighbor_address = interface["address"][0]
-                        break
-                writeLine(
-                    file,
-                    tn,
-                    f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}",
-                )
-                neighbor_addresses["eBGP"].append((neighbor_address, neighbor))
-    writeLine(file, tn, "exit")
-
-    BGP_CommunityLists(file, tn, network, router)
-    BGP_Routemap(file, tn, network, router)
-
-    # Config de l'address-family en ipv6
-    writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
-    writeLine(file, tn, "address-family ipv6 unicast")
-    once = False
-    # iBGP
-    for neighbor_address, neighborID in neighbor_addresses["iBGP"]:
-        writeLine(file, tn, f"neighbor {neighbor_address} activate")
-        writeLine(file, tn, f"neighbor {neighbor_address} send-community")
-        if not once:
-            # Rejoindre son sous réseau
-            for subNet in network["AS"][network["routers"][router - 1]["AS"] - 1][
-                "subNets"
-            ]:
-                if belongs_to_subNet(network, router, subNet):
-                    writeLine(
-                        file,
-                        tn,
-                        f"network {''.join(subNet)} route-map {network['routers'][router-1]['AS']}_Client_in",
-                    )
-            once = True
-       
-
-    # eBGP
-    for neighbor_address, neighborID in neighbor_addresses["eBGP"]:
-        writeLine(file, tn, f"neighbor {neighbor_address} activate")
-        BGP_Border(file, tn, network, router, neighbor_address, neighborID)
-        if not once:
-            # Rejoindre son sous réseau
-            for subNet in network["InterAS"]["subNets"]:
-                if belongs_to_subNet(network, router, subNet):
-                    writeLine(
-                        file,
-                        tn,
-                        f"network {''.join(subNet)} route-map {network['routers'][router-1]['AS']}_Client_in",
-                    )
+            for interface in network["routers"][neighbor - 1]["interface"]:
+                if "Loopback" in interface["name"]:
+                    neighbor_address = interface["address"][0]
+                    break
             writeLine(
                 file,
                 tn,
-                f"network {network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][0]}{network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][1]}",
+                f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}",
             )
-            once = True
+            writeLine(file, tn, f"neighbor {neighbor_address} update-source Loopback1")
+            neighbor_addresses["iBGP"].append((neighbor_address, neighbor))
+
+    writeLine(file, tn, "address-family vpnv4")
+    # iBGP
+    for neighbor_address, neighborID in neighbor_addresses["iBGP"]:
+        writeLine(file, tn, f"neighbor {neighbor_address} activate")
+        writeLine(file, tn, f"neighbor {neighbor_address} send-community both")
+
     writeLine(file, tn, "exit-address-family")
     writeLine(file, tn, "exit")
 
@@ -312,15 +262,12 @@ def config_router(network, routerID):
                     in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]
                 ):
                     OSPF_if(file, tn, network, interface)
-                
-                if (
-                    "MPLS"
-                    in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]
-                    and
-                    not border_interface(network, routerID, interface)
-                ):
+
+                if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
+                    "IGP"
+                ] and not border_interface(network, routerID, interface):
                     MPLS_if(network, routerID, interface)
-                
+
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
