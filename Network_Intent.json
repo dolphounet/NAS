@@ -1,295 +1,404 @@
 {
-    
-    "routers": [
+  "routers": [
+    {
+      "ID": [
+        1,
+        "R1"
+      ],
+      "AS": 100,
+      "interface": [
         {
-            "ID": [1, "R1"],
-            "AS": 1,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [3],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [8],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5000
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            2
+          ],
+          "metricOSPF": ""
         },
         {
-            "ID": [2, "R2"],
-            "AS": 2,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [1],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [4],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [6],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [3],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5014
+          "name": "GigabitEthernet2/0",
+          "neighbor": [
+            5
+          ],
+          "metricOSPF": ""
         },
         {
-            "ID": [3, "R3"],
-            "AS": 3,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [5],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [1],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [7],
-                    "metricOSPF" : "12"
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5001
+          "name": "GigabitEthernet3/0",
+          "neighbor": [
+            7
+          ],
+          "metricOSPF": ""
         },
         {
-            "ID": [4, "R4"],
-            "AS": 4,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5002
-        },
-        {
-            "ID": [5, "R5"],
-            "AS": 5,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [3],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5003
-        },
-        {
-            "ID": [6, "R6"],
-            "AS": 2,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5004
-        },
-        {
-            "ID": [7, "R7"],
-            "AS": 3,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [3],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5005
-        },
-        {
-            "ID": [8, "R8"],
-            "AS": 1,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [1],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5006
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
         }
-
-        
-    ],
-
-    "AS" : [
+      ],
+      "Port": 5000
+    },
+    {
+      "ID": [
+        2,
+        "R2"
+      ],
+      "AS": 100,
+      "interface": [
         {
-            "ASname": 1,
-            "networkIP": ["192.168.1.0","/24"],
-            "loopbackNetworkIP": ["10.0.10.0","/24"],
-            "IGP": ["RIP"],
-            "relations" : {
-                "2" : "Client",
-                "3" : "Client"
-            }
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            1
+          ],
+          "metricOSPF": ""
         },
         {
-            "ASname": 2,
-            "networkIP": ["192.168.2.0","/24"],
-            "loopbackNetworkIP": ["10.0.20.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "1" : "Provider",
-                "4" : "Client",
-                "3" : "Peer"
-            }
+          "name": "GigabitEthernet2/0",
+          "neighbor": [
+            3
+          ],
+          "metricOSPF": ""
         },
         {
-            "ASname": 3,
-            "networkIP": ["192.168.3.0","/24"],
-            "loopbackNetworkIP": ["10.0.30.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "1" : "Provider",
-                "5" : "Client",
-                "2" : "Peer"
-            }
+          "name": "GigabitEthernet3/0",
+          "neighbor": [],
+          "metricOSPF": ""
         },
         {
-            "ASname": 4,
-            "networkIP": ["192.168.4.0","/24"],
-            "loopbackNetworkIP": ["10.0.40.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "2" : "Provider"
-            }
-        },
-        {
-            "ASname": 5,
-            "networkIP": ["192.168.5.0","/24"],
-            "loopbackNetworkIP": ["10.0.50.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "3" : "Provider"
-            }
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
         }
-    ],
-
-    "InterAS" : 
+      ],
+      "Port": 5001
+    },
+    {
+      "ID": [
+        3,
+        "R3"
+      ],
+      "AS": 100,
+      "interface": [
         {
-            "networkIP": ["100.100.0.0","/16"]
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            4
+          ],
+          "metricOSPF": ""
         },
-
-    "Constants" :
         {
-            "Bandwith" : 
-            {
-                "Reference" : 1000,
-                "GigabitEthernet" : 1000000,
-                "FastEthernet" : 100000
-            },
-            "LocPref" :
-            {
-                "Client" : 150,
-                "Peer" : 100,
-                "Provider" : 50
-            }
+          "name": "GigabitEthernet2/0",
+          "neighbor": [
+            2
+          ],
+          "metricOSPF": ""
         },
-
-    "Clients" :
-        [
-            {
-                "ClientID" : 1,
-                "ASList" : [2,3]
-            },
-            {
-                "ClientID" : 2,
-                "ASList" : [4,5]
-            }
-
-        ]
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [],
+          "metricOSPF": "12"
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5002
+    },
+    {
+      "ID": [
+        4,
+        "R4"
+      ],
+      "AS": 100,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            3
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [
+            6
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [
+            8
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5003
+    },
+    {
+      "ID": [
+        5,
+        "R5"
+      ],
+      "AS": 101,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            7
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [
+            3
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [
+            9
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [
+            2
+          ],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5004
+    },
+    {
+      "ID": [
+        6,
+        "R6"
+      ],
+      "AS": 102,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            4
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5005
+    },
+    {
+      "ID": [
+        7,
+        "R7"
+      ],
+      "AS": 103,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            1
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5006
+    },
+    {
+      "ID": [
+        8,
+        "R8"
+      ],
+      "AS": 104,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [
+            4
+          ],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "GigabitEthernet3/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        },
+        {
+          "name": "FastEthernet0/0",
+          "neighbor": [],
+          "metricOSPF": ""
+        }
+      ],
+      "Port": 5007
+    },
+  ],
+  "AS": [
+    {
+      "ASname": 1,
+      "networkIP": [
+        "192.168.1.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.10.0",
+        "/24"
+      ],
+      "IGP": [
+        "RIP"
+      ],
+      "relations": {
+        "2": "Client",
+        "3": "Client"
+      }
+    },
+    {
+      "ASname": 2,
+      "networkIP": [
+        "192.168.2.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.20.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "1": "Provider",
+        "4": "Client",
+        "3": "Peer"
+      }
+    },
+    {
+      "ASname": 3,
+      "networkIP": [
+        "192.168.3.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.30.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "1": "Provider",
+        "5": "Client",
+        "2": "Peer"
+      }
+    },
+    {
+      "ASname": 4,
+      "networkIP": [
+        "192.168.4.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.40.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "2": "Provider"
+      }
+    },
+    {
+      "ASname": 5,
+      "networkIP": [
+        "192.168.5.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.50.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "3": "Provider"
+      }
+    }
+  ],
+  "InterAS": {
+    "networkIP": [
+      "100.100.0.0",
+      "/16"
+    ]
+  },
+  "Constants": {
+    "Bandwith": {
+      "Reference": 1000,
+      "GigabitEthernet": 1000000,
+      "FastEthernet": 100000
+    },
+    "LocPref": {
+      "Client": 150,
+      "Peer": 100,
+      "Provider": 50
+    }
+  },
+  "Clients": [
+    {
+      "ClientID": 1,
+      "ASList": [
+        2,
+        3
+      ]
+    },
+    {
+      "ClientID": 2,
+      "ASList": [
+        4,
+        5
+      ]
+    }
+  ]
 }
