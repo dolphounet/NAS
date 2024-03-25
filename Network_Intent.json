@@ -1,6 +1,12 @@
 {
-    
-    "routers": [
+  "routers": [
+    {
+      "ID": [
+        1,
+        "R1"
+      ],
+      "AS": 100,
+      "interface": [
         {
             "ID": [1, "R1"],
             "AS": 100,
@@ -187,76 +193,134 @@
             ],
             "Port" : 5015
         }
-
-        
-    ],
-
-    "AS" : [
-        {
-            "ASname": 100,
-            "networkIP": ["192.168.1.0","/24"],
-            "loopbackNetworkIP": ["10.0.10.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "1" : "Client",
-                "2" : "Client",
-                "3" : "Client",
-                "4" : "Client"
-            }
-        },
-        {
-            "ASname": 101,
-            "networkIP": ["192.168.2.0","/24"],
-            "loopbackNetworkIP": ["10.0.20.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "5" : "Client"
-            }
-        },
-        {
-            "ASname": 102,
-            "networkIP": ["192.168.3.0","/24"],
-            "loopbackNetworkIP": ["10.0.30.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "6" : "Client"
-            }
-        },
-        {
-            "ASname": 103,
-            "networkIP": ["192.168.4.0","/24"],
-            "loopbackNetworkIP": ["10.0.40.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "7" : "Client"
-            }
-        },
-        {
-            "ASname": 104,
-            "networkIP": ["192.168.5.0","/24"],
-            "loopbackNetworkIP": ["10.0.50.0","/24"],
-            "IGP": ["OSPF"],
-            "relations" : {
-                "8" : "Client"
-            }
-        }
-    ],
-
-    "InterAS" : 
-        {
-            "networkIP": ["100.100.0.0","/16"]
-        },
-
-    "Clients" :
-        [
-            {
-                "ClientID" : 1,
-                "ASList" : [101,102]
-            },
-            {
-                "ClientID" : 2,
-                "ASList" : [103,104]
-            }
-
-        ]
+      ],
+      "Port": 5000
+    }
+  ],
+  "AS": [
+    {
+      "ASname": 1,
+      "networkIP": [
+        "192.168.1.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.10.0",
+        "/24"
+      ],
+      "IGP": [
+        "RIP"
+      ],
+      "relations": {
+        "2": "Client",
+        "3": "Client"
+      }
+    },
+    {
+      "ASname": 2,
+      "networkIP": [
+        "192.168.2.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.20.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "1": "Provider",
+        "4": "Client",
+        "3": "Peer"
+      }
+    },
+    {
+      "ASname": 3,
+      "networkIP": [
+        "192.168.3.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.30.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "1": "Provider",
+        "5": "Client",
+        "2": "Peer"
+      }
+    },
+    {
+      "ASname": 4,
+      "networkIP": [
+        "192.168.4.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.40.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "2": "Provider"
+      }
+    },
+    {
+      "ASname": 5,
+      "networkIP": [
+        "192.168.5.0",
+        "/24"
+      ],
+      "loopbackNetworkIP": [
+        "10.0.50.0",
+        "/24"
+      ],
+      "IGP": [
+        "OSPF"
+      ],
+      "relations": {
+        "3": "Provider"
+      }
+    }
+  ],
+  "InterAS": {
+    "networkIP": [
+      "100.100.0.0",
+      "/16"
+    ]
+  },
+  "Constants": {
+    "Bandwith": {
+      "Reference": 1000,
+      "GigabitEthernet": 1000000,
+      "FastEthernet": 100000
+    },
+    "LocPref": {
+      "Client": 150,
+      "Peer": 100,
+      "Provider": 50
+    }
+  },
+  "Clients": [
+    {
+      "ClientID": 1,
+      "ASList": [
+        2,
+        3
+      ]
+    },
+    {
+      "ClientID": 2,
+      "ASList": [
+        4,
+        5
+      ]
+    }
+  ]
 }
