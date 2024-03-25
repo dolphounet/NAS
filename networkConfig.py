@@ -130,7 +130,10 @@ def BGP_Coeur(file, tn, network, router):
             clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
                 "ClientID"
             ]
-            neighbor_address = interface["address"][0]
+            for client_interface in network["routers"][router_client - 1]["interface"]:
+                if router in client_interface["neighbor"]:
+                    neighbor_address = client_interface["address"][0]
+                    break
             writeLine(file, tn, "address-family ipv4 vrf Client_" + str(clientId))
             writeLine(
                 file,
