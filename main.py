@@ -16,6 +16,7 @@ def main():
     attributeRD(network)
 
     print()
+    
     """
     for router in network["routers"]:
         config_router(network, router["ID"][0])
