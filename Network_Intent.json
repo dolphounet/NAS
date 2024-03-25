@@ -83,88 +83,17 @@
             "interface": [
                 {
                     "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5002
-        },
-        {
-            "ID": [5, "R5"],
-            "AS": 5,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
                     "neighbor" : [3],
                     "metricOSPF" : ""
                 },
                 {
                     "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5003
-        },
-        {
-            "ID": [6, "R6"],
-            "AS": 2,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
+                    "neighbor" : [6],
                     "metricOSPF" : ""
                 },
                 {
                     "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [2],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "FastEthernet0/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                }
-            ],
-            "Port" : 5004
-        },
-        {
-            "ID": [7, "R7"],
-            "AS": 3,
-            "interface": [
-                {
-                    "name" : "GigabitEthernet1/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet2/0",
-                    "neighbor" : [],
-                    "metricOSPF" : ""
-                },
-                {
-                    "name" : "GigabitEthernet3/0",
-                    "neighbor" : [3],
+                    "neighbor" : [8],
                     "metricOSPF" : ""
                 },
                 {
@@ -176,12 +105,34 @@
             "Port" : 5005
         },
         {
-            "ID": [8, "R8"],
-            "AS": 1,
+            "ID": [5, "R5"],
+            "AS": 101,
             "interface": [
                 {
                     "name" : "GigabitEthernet1/0",
+                    "neighbor" : [1],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "GigabitEthernet2/0",
                     "neighbor" : [],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "FastEthernet0/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                }
+            ],
+            "Port" : 5006
+        },
+        {
+            "ID": [6, "R6"],
+            "AS": 102,
+            "interface": [
+                {
+                    "name" : "GigabitEthernet1/0",
+                    "neighbor" : [4],
                     "metricOSPF" : ""
                 },
                 {
@@ -196,11 +147,65 @@
                 },
                 {
                     "name" : "FastEthernet0/0",
-                    "neighbor" : [1],
+                    "neighbor" : [],
                     "metricOSPF" : ""
                 }
             ],
-            "Port" : 5006
+            "Port" : 5007
+        },
+        {
+            "ID": [7, "R7"],
+            "AS": 103,
+            "interface": [
+                {
+                    "name" : "GigabitEthernet1/0",
+                    "neighbor" : [1],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "GigabitEthernet2/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "GigabitEthernet3/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "FastEthernet0/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                }
+            ],
+            "Port" : 5008
+        },
+        {
+            "ID": [8, "R8"],
+            "AS": 104,
+            "interface": [
+                {
+                    "name" : "GigabitEthernet1/0",
+                    "neighbor" : [4],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "GigabitEthernet2/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "GigabitEthernet3/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                },
+                {
+                    "name" : "FastEthernet0/0",
+                    "neighbor" : [],
+                    "metricOSPF" : ""
+                }
+            ],
+            "Port" : 5015
         }
 
         
@@ -208,53 +213,51 @@
 
     "AS" : [
         {
-            "ASname": 1,
+            "ASname": 100,
             "networkIP": ["192.168.1.0","/24"],
             "loopbackNetworkIP": ["10.0.10.0","/24"],
-            "IGP": ["RIP"],
+            "IGP": ["OSPF"],
             "relations" : {
+                "1" : "Client",
                 "2" : "Client",
-                "3" : "Client"
+                "3" : "Client",
+                "4" : "Client"
             }
         },
         {
-            "ASname": 2,
+            "ASname": 101,
             "networkIP": ["192.168.2.0","/24"],
             "loopbackNetworkIP": ["10.0.20.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
-                "1" : "Provider",
-                "4" : "Client",
-                "3" : "Peer"
+                "5" : "Client"
             }
         },
         {
-            "ASname": 3,
+            "ASname": 102,
             "networkIP": ["192.168.3.0","/24"],
             "loopbackNetworkIP": ["10.0.30.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
-                "1" : "Provider",
-                "5" : "Client",
-                "2" : "Peer"
+                "6" : "Client"
             }
         },
         {
-            "ASname": 4,
+            "ASname": 103,
             "networkIP": ["192.168.4.0","/24"],
             "loopbackNetworkIP": ["10.0.40.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
-                "2" : "Provider"
+                "7" : "Client"
             }
         },
         {
-            "ASname": 5,
+            "ASname": 104,
             "networkIP": ["192.168.5.0","/24"],
             "loopbackNetworkIP": ["10.0.50.0","/24"],
             "IGP": ["OSPF"],
             "relations" : {
-                "3" : "Provider"
+                "8" : "Client"
             }
         }
     ],
@@ -264,31 +267,15 @@
             "networkIP": ["100.100.0.0","/16"]
         },
 
-    "Constants" :
-        {
-            "Bandwith" : 
-            {
-                "Reference" : 1000,
-                "GigabitEthernet" : 1000000,
-                "FastEthernet" : 100000
-            },
-            "LocPref" :
-            {
-                "Client" : 150,
-                "Peer" : 100,
-                "Provider" : 50
-            }
-        },
-
     "Clients" :
         [
             {
                 "ClientID" : 1,
-                "ASList" : [2,3]
+                "ASList" : [101,102]
             },
             {
                 "ClientID" : 2,
-                "ASList" : [4,5]
+                "ASList" : [103,104]
             }
 
         ]
