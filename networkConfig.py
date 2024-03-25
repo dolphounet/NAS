@@ -77,7 +77,6 @@ def MPLS(file, tn):
 
 def MPLS_if(file, tn, interface):
     writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
-<<<<<<< HEAD
     
 
 def VRF(file, tn, network, router):
@@ -97,10 +96,6 @@ def VRF(file, tn, network, router):
             writeLine(file, tn, "exit")
     
     
-=======
-
-
->>>>>>> 75669d6 (started bgp)
 def BGP(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
