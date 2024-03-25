@@ -197,6 +197,13 @@ def config_router(network, routerID):
             MPLS(file, tn)
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
+                if border_interface(network, routerID, interface):
+                    router_client = interface["neighbor"][0]
+                    writeLine(
+                        file,
+                        tn,
+                        f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}",
+                    )
                 addressing_if(file, tn, interface)
 
                 if (
@@ -210,13 +217,6 @@ def config_router(network, routerID):
                 ] and not border_interface(network, routerID, interface):
                     MPLS_if(file, tn, interface)
 
-                if border_interface(network, routerID, interface):
-                    router_client = interface["neighbor"][0]
-                    writeLine(
-                        file,
-                        tn,
-                        f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}",
-                    )
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
