@@ -12,12 +12,12 @@
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [5],
-          "address" : ""
+          "address" : "100.100.15.1"
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [7],
-          "address" : ""
+          "address" : "100.100.17.1"
         },
         {
           "name": "FastEthernet0/0",
@@ -93,12 +93,12 @@
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [6],
-          "address" : ""
+          "address" : "100.100.46.1"
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [8],
-          "address" : ""
+          "address" : "100.100.48.1"
         },
         {
           "name": "FastEthernet0/0",
@@ -115,7 +115,7 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [1],
-          "address" : ""
+          "address" : "100.100.15.2"
         },
         {
           "name": "GigabitEthernet2/0",
@@ -142,7 +142,7 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [4],
-          "address" : ""
+          "address" : "100.100.46.2"
         },
         {
           "name": "GigabitEthernet2/0",
@@ -169,7 +169,7 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [1],
-          "address" : ""
+          "address" : "100.100.17.2"
         },
         {
           "name": "GigabitEthernet2/0",
@@ -196,7 +196,7 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [4],
-          "address" : ""            
+          "address" : "100.100.48.2"            
         },
         {
           "name": "GigabitEthernet2/0",
