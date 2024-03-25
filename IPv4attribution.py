@@ -15,10 +15,16 @@ def findAdjacency(network):
 
 def attributeRT(network):
 
+    tempClientASs = []
     for client in network["Clients"]:
         client["RT"] = f"100:{client['ClientID']}"
+        for ASiD in client["ASList"]:
+            network["AS"][ASiD-1]["ClientID"] = client['ClientID']
+            tempClientASs.append(ASiD)
 
-    print( network["Clients"])
+    for AS in network["AS"]:
+        if AS["ASname"] not in tempClientASs:
+            AS['ClientID'] = 0
 
 
 def createLinks(network):
@@ -48,8 +54,6 @@ def createLinks(network):
     for l in range(0,InterASlinks["Count"]):
         Subnet = network["InterAS"]["networkIP"][0]
         network["InterAS"]["subNets"].append([calcSubnet(Subnet,l*4,network["InterAS"]["networkIP"][1]),slashToMask(30)])
-        
-    print(network["InterAS"]["subNets"])
 
     # Gestion des addresses des routeurs des AS
 
@@ -81,8 +85,6 @@ def calcSubnet(networkIP,count,mask):
     netIP = networkIP.split(".")
     netIP[3] = str(int(netIP[3])+count)
     IP = ".".join(netIP)
-    print(IP)
-
     return IP
 
 def calcIP(subnet,nb):
@@ -136,15 +138,7 @@ def attributeRD(network):
     for router in network["routers"]:
         RD_Dic[router["AS"]]+=1
         router["RD"]=f"{router['AS']}:{router['ID'][0]}"
-    
-
-
-    print(RD_Dic)
-    print (network.items())
-            
         
-
-     
     
 def attributeIP(network):
 
