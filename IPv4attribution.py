@@ -85,7 +85,7 @@ def calcSubnet(networkIP,count,mask):
     netIP = networkIP.split(".")
     netIP[3] = str(int(netIP[3])+count)
     IP = ".".join(netIP)
-    if netIP[3]+count > 255 : 
+    if int(netIP[3])+count > 255 : 
         modulo = int(count/255)
         if adressesLeft(mask)[2] > 0:
             count = count - 255*modulo
@@ -183,8 +183,6 @@ def attributeIP(network):
                 else :
                     addressStatic = True
                     ipStatic = (interface["address"],[])
-
-
                 
         for interface in network["routers"][ID2-1]["interface"]:
             if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
@@ -194,6 +192,7 @@ def attributeIP(network):
                 else :
                     a,b = ipStatic
                     ipStatic = (a,interface["address"])
+
 
         if not addressStatic :
             InterASlinks["Links"][(ID1,ID2)] = ([calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]],[calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]])
