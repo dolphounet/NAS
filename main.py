@@ -14,9 +14,14 @@ def main():
     # Attribution des IP
     attributeIP(network)
     attributeRT(network)
-    print()
-    print(network["InterAS"]["InterASlinks"])
     attributeRD(network)
+
+    print()
+    for AS in network["AS"]:
+
+        print(AS)
+        print()
+    
 
     '''
     # Ecriture de la configuration avec telnet
