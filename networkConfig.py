@@ -206,10 +206,9 @@ def config_router(network, routerID):
                     )
                 addressing_if(file, tn, interface)
 
-                if (
-                    "OSPF"
-                    in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]
-                ):
+                if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
+                    "IGP"
+                ] and not border_interface(network, routerID, interface):
                     OSPF_if(file, tn, network, interface)
 
                 if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
