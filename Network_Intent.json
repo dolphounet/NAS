@@ -7,22 +7,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [2],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [5],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [7],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5002
@@ -34,22 +34,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [1],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [3],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5003
@@ -61,22 +61,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [4],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [2],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5004
@@ -88,22 +88,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [3],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [6],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [8],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5005
@@ -115,22 +115,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [1],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5006
@@ -142,22 +142,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [4],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         }
       ],
       "Port": 5007
@@ -169,22 +169,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [1],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [],
-          "address" : ""            
+          "address" : ["",""]            
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""            
+          "address" : ["",""]            
         }
       ],
       "Port": 5008
@@ -196,22 +196,22 @@
         {
           "name": "GigabitEthernet1/0",
           "neighbor": [4],
-          "address" : ""            
+          "address" : ["",""]            
         },
         {
           "name": "GigabitEthernet2/0",
           "neighbor": [],
-          "address" : ""            
+          "address" : ["",""]            
         },
         {
           "name": "GigabitEthernet3/0",
           "neighbor": [],
-          "address" : ""
+          "address" : ["",""]
         },
         {
           "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ""            
+          "address" : ["",""]            
         }
       ],
       "Port": 5015
