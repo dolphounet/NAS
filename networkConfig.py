@@ -99,7 +99,11 @@ def BGP_Coeur(file, tn, network, router):
     writeLine(file, tn, f"bgp router-id {routerId}")
     for rtr in network["routers"]:
         neighbor = rtr["ID"][0]
-        if rtr["AS"] == network["routers"][router - 1]["AS"] and neighbor != router:
+        if (
+            rtr["AS"] == network["routers"][router - 1]["AS"]
+            and neighbor != router
+            and border_router(network, neighbor)
+        ):
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
