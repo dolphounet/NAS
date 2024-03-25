@@ -6,7 +6,7 @@ import time
 def writeLine(file, tn, line):
     tn.write(line.encode() + b"\r\n")
     file.write(line + "\n\r")
-    time.sleep(0.01)
+    time.sleep(0.1)
 
 
 def border_router(network, router):
@@ -31,7 +31,7 @@ def belongs_to_subNet(network, router, subNet):
 
 
 def addressing_if(file, tn, interface):
-    address = "".join(interface["address"])
+    address = " ".join(interface["address"])
     writeLine(file, tn, f"interface {interface['name']}")
     writeLine(file, tn, f"ip address {address}")
 
@@ -48,25 +48,12 @@ def passive_if(file, tn, network, router):
 
 def OSPF_if(file, tn, network, interface):
     writeLine(file, tn, "ip ospf 10 area 0")
-    for interfaceType in network["Constants"]["Bandwith"]:
-        if interfaceType in interface["name"] and interfaceType != "Reference":
-            writeLine(
-                file, tn, f"bandwidth {network['Constants']['Bandwith'][interfaceType]}"
-            )
-            if interface["metricOSPF"] != "":
-                writeLine(file, tn, f"ip ospf cost {interface['metricOSPF']}")
 
 
 def OSPF(file, tn, network, router):
-    routerId = 3 * (str(router) + ".") + router
+    routerId = 3 * (str(router) + ".") + str(router)
     writeLine(file, tn, "router ospf 10")
     writeLine(file, tn, f"router-id {routerId}")
-    passive_if(file, tn, network, router)
-    writeLine(
-        file,
-        tn,
-        f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}",
-    )
     writeLine(file, tn, "exit")
 
 
@@ -100,7 +87,7 @@ def VRF(file, tn, network, router):
             writeLine(file, tn, "exit")
 
 
-def BGP(file, tn, network, router):
+def BGP_Coeur(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
     """
@@ -139,9 +126,7 @@ def BGP(file, tn, network, router):
             clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
                 "ClientID"
             ]
-            neighbor_address = network["routers"][router_client - 1]["interface"][
-                "address"
-            ][0]
+            neighbor_address = interface["address"][0]
             writeLine(file, tn, "address-family ipv4 vrf Client_" + str(clientId))
             writeLine(
                 file,
@@ -149,6 +134,36 @@ def BGP(file, tn, network, router):
                 f"neighbor {neighbor_address} remote-as {network['routers'][router_client-1]['AS']}",
             )
             writeLine(file, tn, f"neighbor {neighbor_address} activate")
+
+    writeLine(file, tn, "exit")
+
+
+def BGP_Client(file, tn, network, router):
+    routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
+
+    writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
+    writeLine(file, tn, f"bgp router-id {routerId}")
+
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
+            router_PE = interface["neighbor"][0]
+            clientId = network["AS"][network["routers"][router_PE - 1]["AS"] - 1][
+                "ClientID"
+            ]
+            for interface in network["routers"][router_PE - 1]["interface"]:
+                if router in interface["neighbor"]:
+                    neighbor_address = interface["address"][0]
+                    break
+            neighbor_address = interface["address"][0]
+            writeLine(
+                file,
+                tn,
+                f"neighbor {neighbor_address} remote-as {network['routers'][router_PE-1]['AS']}",
+            )
+            writeLine(file, tn, "address-family ipv4")
+            writeLine(file, tn, "redistribute connected")
+            writeLine(file, tn, f"neighbor {neighbor_address} activate")
+            writeLine(file, tn, "exit-address-family")
 
     writeLine(file, tn, "exit")
 
@@ -165,6 +180,7 @@ def config_router(network, routerID):
         port = network["routers"][routerID - 1]["Port"]
         host = "localhost"
         tn = telnetlib.Telnet(host, port)
+        writeLine(file, tn, "")
         writeLine(file, tn, "enable")
         writeLine(file, tn, "write erase")  # To erase current configuration
         writeLine(file, tn, "")  # To confirm the configuration deletion
@@ -197,16 +213,22 @@ def config_router(network, routerID):
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
-        if border_router(network, routerID):
+        if (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] == 1
+        ):
             VRF(file, tn, network, routerID)
-            BGP(file, tn, network, routerID)
+            BGP_Coeur(file, tn, network, routerID)
+
+        elif (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] != 1
+        ):
+            BGP_Client(file, tn, network, routerID)
 
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
 
         writeLine(file, tn, "end")
-        writeLine(
-            file, tn, "write"
-        )  # To write the configuration in order not to lose it the next time
-        tn.read_until(b"[OK]")  # Waiting for the writing to complete
+        # To write the configuration in order not to lose it the next time
         tn.close()
