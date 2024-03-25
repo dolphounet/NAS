@@ -165,17 +165,34 @@ def attributeIP(network):
     for k in range(0,len(InterASlinks["Links"])):
         currentNet = network["InterAS"]["subNets"][k][0]
         ID1,ID2 = list(InterASlinks["Links"].keys())[k]
-        InterASlinks["Links"][(ID1,ID2)] = ([calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]],[calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]])
-
+        addressStatic = False
+        ipStatic = ([],[])
+        
         for interface in network["routers"][ID1-1]["interface"]:
             if interface["neighbor"] != [] and interface["neighbor"] == [ID2] :
-                interface["address"] = [calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]]
-                network["routers"][ID1-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])         
-                    
+                if interface["address"] == "" :
+                    interface["address"] = [calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]]
+                    network["routers"][ID1-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])
+                else :
+                    addressStatic = True
+                    ipStatic = (interface["address"],[])
+
+
+                
         for interface in network["routers"][ID2-1]["interface"]:
             if interface["neighbor"] != [] and interface["neighbor"] == [ID1] :
-                interface["address"] = [calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]]
-                network["routers"][ID2-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])
+                if interface["address"] == "" :
+                    interface["address"] = [calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]]
+                    network["routers"][ID2-1]["subNets"].append([currentNet,network["InterAS"]["subNets"][k][1]])
+                else :
+                    a,b = ipStatic
+                    ipStatic = (a,interface["address"])
+
+        if not addressStatic :
+            InterASlinks["Links"][(ID1,ID2)] = ([calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]],[calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]])
+        else:
+            InterASlinks["Links"][(ID1,ID2)] = ([calcIP(currentNet,1),network["InterAS"]["subNets"][k][1]],[calcIP(currentNet,2),network["InterAS"]["subNets"][k][1]])
+
 
     network["InterAS"]["InterASlinks"] = InterASlinks
     
