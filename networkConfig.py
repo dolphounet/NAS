@@ -189,7 +189,11 @@ def config_router(network, routerID):
 
                 if border_interface(network, routerID, interface):
                     router_client = interface["neighbor"][0]
-                    writeLine(file, tn, f"vrf forwarding Client_{network["AS"][network["routers"][router_client - 1]["AS"] - 1]["ClientID"]}")
+                    writeLine(
+                        file,
+                        tn,
+                        f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}",
+                    )
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
