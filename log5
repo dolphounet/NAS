@@ -1,7 +1,7 @@
 
 enable
 write erase
-
+
 conf t
 interface GigabitEthernet1/0
 ip address 100.100.15.2 255.255.255.0

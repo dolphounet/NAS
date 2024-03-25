@@ -6,7 +6,7 @@ import time
 def writeLine(file, tn, line):
     tn.write(line.encode() + b"\r\n")
     file.write(line + "\n\r")
-    time.sleep(0.1)
+    time.sleep(0.03)
 
 
 def border_router(network, router):
