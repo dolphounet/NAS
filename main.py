@@ -16,11 +16,10 @@ def main():
     attributeRD(network)
 
     print()
+    """
     for router in network["routers"]:
         config_router(network, router["ID"][0])
 
-    """
->>>>>>> d9d61fa (fixed some bugs)
     # Ecriture de la configuration avec telnet
     
     threads = [threading.Thread(target=config_router, args=(network, i+1)) for i in range(len(network["routers"]))]
@@ -29,8 +28,6 @@ def main():
 
     for thread in threads :
         thread.join()
-<<<<<<< HEAD
-=======
     """
 
 
