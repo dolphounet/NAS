@@ -58,7 +58,7 @@ def OSPF_if(file, tn, network, interface):
 
 
 def OSPF(file, tn, network, router):
-    routerId = 3 * (router + ".") + router
+    routerId = 3 * (str(router) + ".") + router
     writeLine(file, tn, "router ospf 10")
     writeLine(file, tn, f"router-id {routerId}")
     passive_if(file, tn, network, router)
@@ -76,16 +76,18 @@ def MPLS(file, tn):
 
 
 def MPLS_if(file, tn, interface):
-    writeLine(file, tn, f"ip address {interface[0]} {interface[1]}")
+    writeLine(
+        file, tn, f"ip address {interface['address'][0]} {interface['address'][1]}"
+    )
 
 
 def VRF(file, tn, network, router):
     for interface in network["routers"][router - 1]["interface"]:
         if border_interface(network, router, interface):
             router_client = interface["neighbor"][0]
-            RD = network["routers"][router_client - 1]["rd"]
+            RD = network["routers"][router_client - 1]["RD"]
             clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
-                "clientId"
+                "ClientID"
             ]
             RT = network["Clients"][clientId - 1]["RT"]
 
@@ -135,9 +137,11 @@ def BGP(file, tn, network, router):
         if border_interface(network, router, interface):
             router_client = interface["neighbor"][0]
             clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
-                "clientId"
+                "ClientID"
             ]
-            neighbor_address = network["Clients"][clientId - 1]["address"][0]
+            neighbor_address = network["routers"][router_client - 1]["interface"][
+                "address"
+            ][0]
             writeLine(file, tn, "address-family ipv4 vrf Client_" + str(clientId))
             writeLine(
                 file,
@@ -181,8 +185,11 @@ def config_router(network, routerID):
                 if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
                     "IGP"
                 ] and not border_interface(network, routerID, interface):
-                    MPLS_if(network, routerID, interface)
+                    MPLS_if(file, tn, interface)
 
+                if border_interface(network, routerID, interface):
+                    router_client = interface["neighbor"][0]
+                    writeLine(file, tn, f"vrf forwarding Client_{network["AS"][network["routers"][router_client - 1]["AS"] - 1]["ClientID"]}")
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
 
