@@ -2,7 +2,7 @@ import threading
 
 from filesIO import readJson, writeJson,mkdir
 from IPv4attribution import attributeIP, attributeRD, attributeRT
-from networkConfig import config_router
+from networkConfig import config_router,routeReflector
 
 
 
@@ -26,6 +26,8 @@ def main():
 
     for thread in threads :
         thread.join()
+
+    
 
 if __name__ == "__main__":
     main()
