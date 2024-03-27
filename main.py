@@ -1,6 +1,6 @@
 import threading
 
-from filesIO import readJson
+from filesIO import readJson, writeJson
 from IPv4attribution import attributeIP, attributeRD, attributeRT
 from networkConfig import config_router
 
@@ -15,20 +15,16 @@ def main():
     attributeRT(network)
     attributeRD(network)
 
-    print(network)
-    for router in network["routers"]:
-        config_router(network, router["ID"][0])
+    # Ecriture du fichier json pour voir la config
+    writeJson(network,"network.json")
 
     # Ecriture de la configuration avec telnet
-    """
     threads = [threading.Thread(target=config_router, args=(network, i+1)) for i in range(len(network["routers"]))]
     for thread in threads:
         thread.start()
 
     for thread in threads :
         thread.join()
-    """
-
 
 if __name__ == "__main__":
     main()

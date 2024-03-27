@@ -8,19 +8,19 @@
 interface GigabitEthernet1/0
 ip address 192.168.1.9 255.255.255.252
 ip ospf 10 area 0
-ip address 192.168.1.9 255.255.255.252
+mpls ip
 no shutdown
 exit
 interface GigabitEthernet2/0
 ip address 192.168.1.6 255.255.255.252
 ip ospf 10 area 0
-ip address 192.168.1.6 255.255.255.252
+mpls ip
 no shutdown
 exit
 interface Loopback1
 ip address 10.0.10.3 255.255.255.255
 ip ospf 10 area 0
-ip address 10.0.10.3 255.255.255.255
+mpls ip
 no shutdown
 exit
 router ospf 10

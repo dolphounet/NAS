@@ -20,6 +20,11 @@
           "address" : ["100.100.17.1","255.255.255.0"]
         },
         {
+          "name": "GigabitEthernet4/0",
+          "neighbor": [9],
+          "address" : ["100.100.19.1","255.255.255.0"]
+        },
+        {
           "name": "FastEthernet0/0",
           "neighbor": [],
           "address" : ["",""]
@@ -123,11 +128,6 @@
           "address" : ["",""]
         },
         {
-          "name": "GigabitEthernet3/0",
-          "neighbor": [],
-          "address" : ["",""]
-        },
-        {
           "name": "FastEthernet0/0",
           "neighbor": [],
           "address" : ["",""]
@@ -146,11 +146,6 @@
         },
         {
           "name": "GigabitEthernet2/0",
-          "neighbor": [],
-          "address" : ["",""]
-        },
-        {
-          "name": "GigabitEthernet3/0",
           "neighbor": [],
           "address" : ["",""]
         },
@@ -177,11 +172,6 @@
           "address" : ["",""]            
         },
         {
-          "name": "GigabitEthernet3/0",
-          "neighbor": [],
-          "address" : ["",""]
-        },
-        {
           "name": "FastEthernet0/0",
           "neighbor": [],
           "address" : ["",""]            
@@ -204,9 +194,26 @@
           "address" : ["",""]            
         },
         {
-          "name": "GigabitEthernet3/0",
+          "name": "FastEthernet0/0",
           "neighbor": [],
-          "address" : ["",""]
+          "address" : ["",""]            
+        }
+      ],
+      "Port": 5015
+    },
+    {
+      "ID": [9,"R9"],
+      "AS": 6,
+      "interface": [
+        {
+          "name": "GigabitEthernet1/0",
+          "neighbor": [1],
+          "address" : ["100.100.19.2","255.255.255.0"]            
+        },
+        {
+          "name": "GigabitEthernet2/0",
+          "neighbor": [],
+          "address" : ["",""]            
         },
         {
           "name": "FastEthernet0/0",
@@ -217,7 +224,7 @@
       "Port": 5016
     },
     {
-      "ID": [9,"R9"],
+      "ID": [10,"R10"],
       "AS": 1,
       "interface": [
         {
@@ -241,7 +248,7 @@
           "address" : ["",""]            
         }
       ],
-      "Port": 5017
+      "Port": 5015
     }
   ],
   "AS": [
@@ -274,6 +281,12 @@
       "networkIP": ["192.168.5.0","/24"],
       "loopbackNetworkIP": ["10.0.50.0","/24"],
       "IGP": []
+    },
+    {
+      "ASname": 6,
+      "networkIP": ["192.168.6.0","/24"],
+      "loopbackNetworkIP": ["10.0.60.0","/24"],
+      "IGP": []
     }
   ],
   "InterAS": {
@@ -282,11 +295,18 @@
   "Clients": [
     {
       "ClientID": 1,
-      "ASList": [2,3]
+      "ASList": [2,3],
+      "Connections": [3]
     },
     {
       "ClientID": 2,
-      "ASList": [4,5]
+      "ASList": [4,5],
+      "Connections": [3]
+    },
+    {
+      "ClientID": 3,
+      "ASList": [6],
+      "Connections": [1,2]
     }
   ],
   
