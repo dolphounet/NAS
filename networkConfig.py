@@ -107,7 +107,6 @@ def BGP_Coeur(file, tn, network, router):
             and neighbor != router
             and border_router(network, neighbor)
         ):
-
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
@@ -182,6 +181,31 @@ def BGP_Client(file, tn, network, router):
 
     writeLine(file, tn, "exit")
 
+def routeReflector(network,file,tn):
+    routerID = network["Constants"]["RouteReflector"]
+    AS = network["routers"][routerID-1]["AS"]
+    PEaddr = []
+    
+    for rtr in network["routers"]:
+        if (rtr["AS"] == AS and border_router(network,rtr["ID"][0])):
+            for interface in rtr["interface"]:
+                if "Loopback" in interface["name"]:
+                    PEaddr.append(interface["address"][0])
+                
+    for interface in network["routers"][routerID-1]["interface"]:
+        if "Loopback" in interface["name"]:
+            routerLoopback = interface["name"]
+    
+    writeLine(file, tn, f"router bgp {AS}")
+    for nghaddr in PEaddr:
+        writeLine(file, tn, f"neighbor {nghaddr} remote-as {AS}")
+        writeLine(file, tn, f"neighbor {nghaddr} update-source {routerLoopback}")
+
+    writeLine(file, tn, f"address-family vpnv4")
+    for nghaddr in PEaddr:
+        writeLine(file, tn, f"neighbor {nghaddr} activate")
+        writeLine(file, tn, f"neighbor {nghaddr} send-community both")
+        writeLine(file, tn, f"neighbor {nghaddr} route-reflector-client")
 
 def config_router(network, routerID,logsPath):
     rsvp_bandwidth = network["Constants"]["Bandwidth"]
@@ -248,6 +272,8 @@ def config_router(network, routerID,logsPath):
 
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
+
+        routeReflector(network,file,tn)
 
         writeLine(file, tn, "end")
         # To write the configuration in order not to lose it the next time
