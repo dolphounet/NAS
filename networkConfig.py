@@ -64,7 +64,9 @@ def MPLS(file, tn):
 def MPLS_if(file, tn, interface):
     writeLine(file, tn, f"mpls ip")
 
-
+def RSVP(file, tn, bandwidth):
+    writeLine(file, tn, f"ip rsvp bandwidth {bandwidth}")
+    
 def VRF(file, tn, network, router):
     for interface in network["routers"][router - 1]["interface"]:
         if border_interface(network, router, interface):
@@ -182,6 +184,7 @@ def BGP_Client(file, tn, network, router):
 
 
 def config_router(network, routerID,logsPath):
+    rsvp_bandwidth = network["Constants"]["Bandwidth"]
     fileName = f"log{routerID}"  # We create a logging file
     path = os.path.join(logsPath,fileName)
     print(path)
@@ -210,7 +213,7 @@ def config_router(network, routerID,logsPath):
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 writeLine(file, tn, f"interface {interface['name']}")
                 if (network["routers"][routerID - 1]["AS"] == 1):
-                    # RSVP
+                    RSVP(file, tn, rsvp_bandwidth)
                     if border_interface(network, routerID, interface):
                         router_client = interface["neighbor"][0]
                         writeLine(file, tn, f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}")
