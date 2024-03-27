@@ -5,19 +5,19 @@
 conf t
 interface GigabitEthernet1/0
 vrf forwarding Client_0
-ip address 100.100.15.2 255.255.255.0
+ip address 100.100.19.2 255.255.255.0
 no shutdown
 exit
 interface Loopback1
-ip address 10.0.20.1 255.255.255.255
+ip address 10.0.60.1 255.255.255.255
 no shutdown
 exit
-router bgp 2
-bgp router-id 5.5.5.5
-neighbor 100.100.15.1 remote-as 1
+router bgp 6
+bgp router-id 9.9.9.9
+neighbor 100.100.19.1 remote-as 1
 address-family ipv4
 redistribute connected
-neighbor 100.100.15.1 activate
+neighbor 100.100.19.1 activate
 exit-address-family
 exit
 end
