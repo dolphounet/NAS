@@ -204,13 +204,13 @@ def config_router(network, routerID):
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 writeLine(file, tn, f"interface {interface['name']}")
-                if border_interface(network, routerID, interface):
+                if (
+                    border_interface(network, routerID, interface) 
+                    and network["routers"][routerID - 1]["AS"] == 1 
+                ):
                     router_client = interface["neighbor"][0]
-                    writeLine(
-                        file,
-                        tn,
-                        f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}",
-                    )
+                    writeLine(file, tn, f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}")
+                
                 addressing_if(file, tn, interface)
 
                 if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
