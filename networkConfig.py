@@ -189,9 +189,7 @@ def config_router(network, routerID,logsPath):
         os.remove(path)
     file = open(path, "x")
     file.close()
-    with open(
-        path, "a"
-    ) as file:  # We open the logging file to write what we are sending to the router
+    with open(path, "a") as file:  # We open the logging file to write what we are sending to the router
         port = network["routers"][routerID - 1]["Port"]
         host = "localhost"
         tn = telnetlib.Telnet(host, port)
@@ -211,12 +209,11 @@ def config_router(network, routerID,logsPath):
         for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
                 writeLine(file, tn, f"interface {interface['name']}")
-                if (
-                    border_interface(network, routerID, interface) 
-                    and network["routers"][routerID - 1]["AS"] == 1 
-                ):
-                    router_client = interface["neighbor"][0]
-                    writeLine(file, tn, f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}")
+                if (network["routers"][routerID - 1]["AS"] == 1):
+                    # RSVP
+                    if border_interface(network, routerID, interface):
+                        router_client = interface["neighbor"][0]
+                        writeLine(file, tn, f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}")
                 
                 addressing_if(file, tn, interface)
 
