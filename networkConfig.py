@@ -104,7 +104,10 @@ def BGP_Coeur(file, tn, network, router):
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
-                    neighbor_address = interface["address"][0]
+                    for interface in network["routers"][network["RouteReflector"]-1]["interface"]:
+                        if "Loopback" in interface["name"]:
+                            neighbor_address = interface["address"][0]
+                            break
                     break
             writeLine(
                 file,
@@ -170,7 +173,6 @@ def BGP_Client(file, tn, network, router):
             writeLine(file, tn, "exit-address-family")
 
     writeLine(file, tn, "exit")
-
 
 def config_router(network, routerID):
     fileName = f"log{routerID}"  # We create a logging file
