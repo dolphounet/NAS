@@ -309,6 +309,9 @@
       "Connections": [1,2]
     }
   ],
+  "Constants" : {
+    "RouteReflector":10,
+    "Bandwidth" : 100000
+  }
   
-  "RouteReflector":10
 }
