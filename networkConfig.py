@@ -109,11 +109,10 @@ def BGP_Coeur(file, tn, network, router):
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
-                    for interface in network["routers"][network["RouteReflector"]-1]["interface"]:
+                    for interface in network["routers"][network["Constants"]["RouteReflector"]-1]["interface"]:
                         if "Loopback" in interface["name"]:
                             neighbor_address = interface["address"][0]
                             break
-                        
                     break
     
             writeLine(
@@ -199,9 +198,8 @@ def config_router(network, routerID,logsPath):
         writeLine(file, tn, "write erase")  # To erase current configuration
         writeLine(file, tn, "")  # To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
-        writeLine(file, tn, "reload")
         writeLine(file, tn, "conf t")
-        writeLine(file, tn, f"hostname {network["routers"][routerID-1]["ID"][1]}")
+        writeLine(file, tn, f"hostname {network['routers'][routerID-1]['ID'][1]}")
         if (
             border_router(network, routerID)
             and network["routers"][routerID - 1]["AS"] == 1
