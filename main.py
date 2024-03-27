@@ -1,6 +1,6 @@
 import threading
 
-from filesIO import readJson
+from filesIO import readJson, writeJson
 from IPv4attribution import attributeIP, attributeRD, attributeRT
 from networkConfig import config_router
 
@@ -14,6 +14,9 @@ def main():
     attributeIP(network)
     attributeRT(network)
     attributeRD(network)
+
+    # Ecriture du fichier json pour voir la config
+    writeJson(network,"network.json")
 
     # Ecriture de la configuration avec telnet
     threads = [threading.Thread(target=config_router, args=(network, i+1)) for i in range(len(network["routers"]))]
