@@ -198,6 +198,7 @@ def config_router(network, routerID,logsPath):
         writeLine(file, tn, "write erase")  # To erase current configuration
         writeLine(file, tn, "")  # To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
+        writeLine(file, tn, "reload")
         writeLine(file, tn, "conf t")
         writeLine(file, tn, f"hostname {network["routers"][routerID-1]["ID"][1]}")
         if (
