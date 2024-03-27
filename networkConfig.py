@@ -172,14 +172,16 @@ def BGP_Client(file, tn, network, router):
     writeLine(file, tn, "exit")
 
 
-def config_router(network, routerID):
+def config_router(network, routerID,logsPath):
     fileName = f"log{routerID}"  # We create a logging file
-    if os.path.exists(fileName):
-        os.remove(fileName)
-    file = open(fileName, "x")
+    path = os.path.join(logsPath,fileName)
+    print(path)
+    if os.path.exists(path):
+        os.remove(path)
+    file = open(path, "x")
     file.close()
     with open(
-        fileName, "a"
+        path, "a"
     ) as file:  # We open the logging file to write what we are sending to the router
         port = network["routers"][routerID - 1]["Port"]
         host = "localhost"
