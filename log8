@@ -4,8 +4,8 @@
 
 conf t
 interface GigabitEthernet1/0
-ip address 100.100.48.2 255.255.255.0
 vrf forwarding Client_0
+ip address 100.100.48.2 255.255.255.0
 no shutdown
 exit
 interface Loopback1
