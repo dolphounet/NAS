@@ -92,7 +92,7 @@ def BGP_Coeur(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
     """
-
+    addresses_clients_RR=[]
     routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
     neighbor_addresses = {"iBGP": [], "eBGP": []}
 
@@ -105,6 +105,7 @@ def BGP_Coeur(file, tn, network, router):
             and neighbor != router
             and border_router(network, neighbor)
         ):
+
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
@@ -114,7 +115,7 @@ def BGP_Coeur(file, tn, network, router):
                             break
                         
                     break
-            print(neighbor_address)
+    
             writeLine(
                 file,
                 tn,
