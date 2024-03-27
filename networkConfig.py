@@ -94,7 +94,7 @@ def BGP_Coeur(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
     """
-
+    addresses_clients_RR=[]
     routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
     neighbor_addresses = {"iBGP": [], "eBGP": []}
 
@@ -107,16 +107,16 @@ def BGP_Coeur(file, tn, network, router):
             and neighbor != router
             and border_router(network, neighbor)
         ):
+
             # iBGP
             for interface in network["routers"][neighbor - 1]["interface"]:
                 if "Loopback" in interface["name"]:
-                    for interface in network["routers"][network["RouteReflector"]-1]["interface"]:
+                    for interface in network["routers"][network["Constants"]["RouteReflector"]-1]["interface"]:
                         if "Loopback" in interface["name"]:
                             neighbor_address = interface["address"][0]
                             break
-                        
                     break
-            print(neighbor_address)
+    
             writeLine(
                 file,
                 tn,
@@ -202,6 +202,7 @@ def config_router(network, routerID,logsPath):
         writeLine(file, tn, "")  # To confirm the configuration deletion
         tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
+        writeLine(file, tn, f"hostname {network['routers'][routerID-1]['ID'][1]}")
         if (
             border_router(network, routerID)
             and network["routers"][routerID - 1]["AS"] == 1

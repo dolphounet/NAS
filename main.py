@@ -5,6 +5,7 @@ from IPv4attribution import attributeIP, attributeRD, attributeRT
 from networkConfig import config_router
 
 
+
 def main():
 
     # Récupération des informations du réseau
@@ -14,7 +15,6 @@ def main():
     attributeIP(network)
     attributeRT(network)
     attributeRD(network)
-
     # Ecriture du fichier json pour voir la config
     writeJson(network,"network.json")
     logsPath = mkdir("logs")
