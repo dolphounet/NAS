@@ -81,7 +81,7 @@ def VRF(file, tn, network, router):
             writeLine(file, tn, f"route-target import {RT}")
             
             for id in network["Clients"][clientId-1]["Connections"] :
-                writeLine(file, tn, f"route-target import {network["Clients"][id - 1]["RT"]}")
+                writeLine(file, tn, f"route-target import {network['Clients'][id - 1]['RT']}")
                 
             writeLine(file, tn, "address-family ipv4")
             writeLine(file, tn, "exit-address-family")
@@ -112,7 +112,9 @@ def BGP_Coeur(file, tn, network, router):
                         if "Loopback" in interface["name"]:
                             neighbor_address = interface["address"][0]
                             break
+                        
                     break
+            print(neighbor_address)
             writeLine(
                 file,
                 tn,
