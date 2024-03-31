@@ -273,7 +273,8 @@ def config_router(network, routerID,logsPath):
         if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
 
-        routeReflector(network,file,tn)
+        if routerID == network["Constants"]["RouteReflector"] :
+            routeReflector(network,file,tn)
 
         writeLine(file, tn, "end")
         # To write the configuration in order not to lose it the next time
