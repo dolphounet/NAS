@@ -1,199 +1,281 @@
+import os
 import telnetlib
 import time
-import os
+
 
 def writeLine(file, tn, line):
-    tn.write(line.encode()+b"\r\n")
-    file.write(line+"\n\r")
-    time.sleep(0.01)
+    tn.write(line.encode() + b"\r\n")
+    file.write(line + "\n\r")
+    time.sleep(0.03)
+
 
 def border_router(network, router):
-    for interface in network["routers"][router-1]["interface"]:
-        if interface["neighbor"] != [] and network["routers"][interface["neighbor"][0]-1]["AS"] != network["routers"][router-1]["AS"]:
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
             return True
     return False
 
+
+def border_interface(network, router, interface):
+    if (
+        interface["neighbor"] != []
+        and network["routers"][interface["neighbor"][0] - 1]["AS"]
+        != network["routers"][router - 1]["AS"]
+    ):
+        return True
+    return False
+
+
 def belongs_to_subNet(network, router, subNet):
-    return subNet in network["routers"][router-1]["subNets"]
+    return subNet in network["routers"][router - 1]["subNets"]
+
 
 def addressing_if(file, tn, interface):
-    address = "".join(interface["address"])
-    writeLine(file, tn, f"interface {interface['name']}")
-    writeLine(file, tn, "ipv6 enable")
-    writeLine(file, tn, f"ipv6 address {address}")
+    address = " ".join(interface["address"])
+    writeLine(file, tn, f"ip address {address}")
 
 
 def passive_if(file, tn, network, router):
-    for interface in network["routers"][router-1]["interface"]:
-        if interface["neighbor"] != [] and network["routers"][interface["neighbor"][0]-1]["AS"] != network["routers"][router-1]["AS"]:
+    for interface in network["routers"][router - 1]["interface"]:
+        if (
+            interface["neighbor"] != []
+            and network["routers"][interface["neighbor"][0] - 1]["AS"]
+            != network["routers"][router - 1]["AS"]
+        ):
             writeLine(file, tn, f"passive-interface {interface['name']}")
 
-def OSPF_if(file, tn, network,interface):
-    writeLine(file, tn, "ipv6 ospf 10 area 0")
-    for interfaceType in network["Constants"]["Bandwith"]:
-        if interfaceType in interface["name"] and interfaceType != "Reference":
-            writeLine(file, tn, f"bandwidth {network['Constants']['Bandwith'][interfaceType]}")
-            if interface['metricOSPF'] != "":
-                writeLine(file, tn, f"ipv6 ospf cost {interface['metricOSPF']}")
+
+def OSPF_if(file, tn, network, interface):
+    writeLine(file, tn, "ip ospf 10 area 0")
+
 
 def OSPF(file, tn, network, router):
-    routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
-    writeLine(file, tn, "ipv6 router ospf 10")
+    routerId = 3 * (str(router) + ".") + str(router)
+    writeLine(file, tn, "router ospf 10")
     writeLine(file, tn, f"router-id {routerId}")
-    passive_if(file, tn, network, router)
-    writeLine(file, tn, f"auto-cost reference-bandwidth {network['Constants']['Bandwith']['Reference']}")
     writeLine(file, tn, "exit")
 
-def RIP_if(file, tn, network, router, interface):
-    if interface["name"] == "Loopback1" or network["routers"][interface["neighbor"][0]-1]["AS"] == network["routers"][router-1]["AS"]:
-        writeLine(file, tn, "ipv6 rip BeginRIP enable")
 
-def RIP(file, tn):
-    writeLine(file, tn, "ipv6 router rip BeginRIP")
-    writeLine(file, tn, "redistribute connected")
-    writeLine(file, tn, "exit")
+def MPLS(file, tn):
+    writeLine(file, tn, "mpls ip")
+    writeLine(file, tn, "mpls label protocol ldp")
 
-def BGP(file, tn, network, router):
+
+def MPLS_if(file, tn, interface):
+    writeLine(file, tn, f"mpls ip")
+
+def RSVP(file, tn, bandwidth):
+    writeLine(file, tn, f"ip rsvp bandwidth {bandwidth}")
+    
+def VRF(file, tn, network, router):
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
+            router_client = interface["neighbor"][0]
+            RD = network["routers"][router_client - 1]["RD"]
+            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
+                "ClientID"
+            ]
+            RT = network["Clients"][clientId - 1]["RT"]
+
+            writeLine(file, tn, f"vrf definition Client_{clientId}")
+            writeLine(file, tn, f"rd {RD}")
+            writeLine(file, tn, f"route-target export {RT}")
+            writeLine(file, tn, f"route-target import {RT}")
+            
+            for id in network["Clients"][clientId-1]["Connections"] :
+                writeLine(file, tn, f"route-target import {network['Clients'][id - 1]['RT']}")
+                
+            writeLine(file, tn, "address-family ipv4")
+            writeLine(file, tn, "exit-address-family")
+            writeLine(file, tn, "exit")
+
+
+def BGP_Coeur(file, tn, network, router):
     """
     Ca s'applique pour le routeur d'ID router
     """
-
+    addresses_clients_RR=[]
     routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
-    neighbor_addresses = {"iBGP" : [], "eBGP" : []}
+    neighbor_addresses = {"iBGP": [], "eBGP": []}
 
     writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
-    writeLine(file, tn, "no bgp default ipv4-unicast")
     writeLine(file, tn, f"bgp router-id {routerId}")
     for rtr in network["routers"]:
         neighbor = rtr["ID"][0]
-        if neighbor != router:
-
+        if (
+            rtr["AS"] == network["routers"][router - 1]["AS"]
+            and neighbor != router
+            and border_router(network, neighbor)
+        ):
             # iBGP
-            if network["routers"][neighbor-1]["AS"] == network["routers"][router-1]["AS"]:
-                for interface in network["routers"][neighbor-1]["interface"]:
-                    if "Loopback" in interface["name"]:
-                        neighbor_address = interface["address"][0]
-                        break
-                writeLine(file, tn, f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}")
-                writeLine(file, tn, f"neighbor {neighbor_address} update-source Loopback1")
-                neighbor_addresses["iBGP"].append((neighbor_address,neighbor))
+            for interface in network["routers"][neighbor - 1]["interface"]:
+                if "Loopback" in interface["name"]:
+                    for interface in network["routers"][network["Constants"]["RouteReflector"]-1]["interface"]:
+                        if "Loopback" in interface["name"]:
+                            neighbor_address = interface["address"][0]
+                            break
+                    break
+    
+            writeLine(
+                file,
+                tn,
+                f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}",
+            )
+            writeLine(file, tn, f"neighbor {neighbor_address} update-source Loopback1")
+            neighbor_addresses["iBGP"].append(neighbor_address)
 
-            # eBGP
-            elif neighbor in network["adjDic"][router]:
-                for interface in network["routers"][neighbor-1]["interface"]:
-                    if router in interface["neighbor"]:
-                        neighbor_address = interface["address"][0]
-                        break
-                writeLine(file, tn, f"neighbor {neighbor_address} remote-as {network['routers'][neighbor-1]['AS']}")
-                neighbor_addresses["eBGP"].append((neighbor_address,neighbor))
-    writeLine(file, tn, "exit")
-
-    BGP_CommunityLists(file, tn, network,router)
-    BGP_Routemap(file, tn, network,router) 
-
-    # Config de l'address-family en ipv6
-    writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
-    writeLine(file, tn, "address-family ipv6 unicast")
-    once = False
+    writeLine(file, tn, "address-family vpnv4")
     # iBGP
-    for (neighbor_address,neighborID) in neighbor_addresses["iBGP"]:
+    for neighbor_address in neighbor_addresses["iBGP"]:
         writeLine(file, tn, f"neighbor {neighbor_address} activate")
-        writeLine(file, tn, f"neighbor {neighbor_address} send-community")
-        if not once :
-            # Rejoindre son sous réseau
-            for subNet in network["AS"][network["routers"][router-1]["AS"]-1]["subNets"]:
-                if belongs_to_subNet(network, router, subNet):
-                    writeLine(file, tn, f"network {''.join(subNet)} route-map {network['routers'][router-1]['AS']}_Client_in")
-            once = True
+        writeLine(file, tn, f"neighbor {neighbor_address} send-community extended")
 
-    # eBGP
-    for (neighbor_address,neighborID) in neighbor_addresses["eBGP"]:
-        writeLine(file, tn, f"neighbor {neighbor_address} activate")
-        BGP_Border(file, tn, network, router,neighbor_address,neighborID)
-        if not once :
-            # Rejoindre son sous réseau
-            for subNet in network["InterAS"]["subNets"]:
-                if belongs_to_subNet(network, router, subNet):
-                    writeLine(file, tn, f"network {''.join(subNet)} route-map {network['routers'][router-1]['AS']}_Client_in")
-            writeLine(file, tn, f"network {network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][0]}{network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][1]}")
-            once = True 
     writeLine(file, tn, "exit-address-family")
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
+            router_client = interface["neighbor"][0]
+            clientId = network["AS"][network["routers"][router_client - 1]["AS"] - 1][
+                "ClientID"
+            ]
+            for client_interface in network["routers"][router_client - 1]["interface"]:
+                if router in client_interface["neighbor"]:
+                    neighbor_address = client_interface["address"][0]
+                    break
+            writeLine(file, tn, "address-family ipv4 vrf Client_" + str(clientId))
+            writeLine(
+                file,
+                tn,
+                f"neighbor {neighbor_address} remote-as {network['routers'][router_client-1]['AS']}",
+            )
+            writeLine(file, tn, f"neighbor {neighbor_address} activate")
+
     writeLine(file, tn, "exit")
 
-def BGP_Border(file, tn, network,router,neighbor_address,neighborID):
 
-    # Application des route-map
-    neighborType = network["AS"][network["routers"][router-1]["AS"]-1]["relations"][str(network["routers"][neighborID-1]["AS"])]
-    writeLine(file, tn, f"neighbor {neighbor_address} route-map {network['routers'][router-1]['AS']}_{neighborType}_in in")
-    # Route-map out
-    writeLine(file, tn, f"neighbor {neighbor_address} route-map {network['routers'][router-1]['AS']}_{neighborType}_out out")
+def BGP_Client(file, tn, network, router):
+    routerId = f"{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}.{network['routers'][router-1]['ID'][0]}"
 
+    writeLine(file, tn, f"router bgp {network['routers'][router-1]['AS']}")
+    writeLine(file, tn, f"bgp router-id {routerId}")
 
-def BGP_CommunityLists(file, tn, network,router):
-    writeLine(file, tn, f"ipv6 route {network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][0]}{network['AS'][network['routers'][router-1]['AS']-1]['networkIP'][1]} Null0")
-    writeLine(file, tn, "ip bgp-community new-format")
+    for interface in network["routers"][router - 1]["interface"]:
+        if border_interface(network, router, interface):
+            router_PE = interface["neighbor"][0]
+            clientId = network["AS"][network["routers"][router_PE - 1]["AS"] - 1][
+                "ClientID"
+            ]
+            for interface in network["routers"][router_PE - 1]["interface"]:
+                if router in interface["neighbor"]:
+                    neighbor_address = interface["address"][0]
+                    break
+            neighbor_address = interface["address"][0]
+            writeLine(
+                file,
+                tn,
+                f"neighbor {neighbor_address} remote-as {network['routers'][router_PE-1]['AS']}",
+            )
+            writeLine(file, tn, "address-family ipv4")
+            writeLine(file, tn, "redistribute connected")
+            writeLine(file, tn, f"neighbor {neighbor_address} activate")
+            writeLine(file, tn, "exit-address-family")
 
-    for relation in network["Constants"]["LocPref"]:
-        if relation != "Client" :
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Client']}")
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} deny {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Peer']}")
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} deny {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Provider']}")
+    writeLine(file, tn, "exit")
 
-        elif relation == "Client" :
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Client']}")
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Peer']}")
-            writeLine(file, tn, f"ip community-list {network['Constants']['LocPref'][relation]} permit {network['routers'][router-1]['AS']}:{network['Constants']['LocPref']['Provider']}")
-
-def BGP_Routemap(file, tn, network,router):
+def routeReflector(network,file,tn):
+    routerID = network["Constants"]["RouteReflector"]
+    AS = network["routers"][routerID-1]["AS"]
+    PEaddr = []
     
-    # In route-map
-    for relation in network["Constants"]["LocPref"]:
-        writeLine(file, tn, f"route-map {network['routers'][router-1]['AS']}_{relation}_in permit {int(network['Constants']['LocPref'][relation]/10)}")
-        writeLine(file, tn, f"set local-preference {network['Constants']['LocPref'][relation]}")
-        writeLine(file, tn, f"set community {network['routers'][router-1]['AS']}:{network['Constants']['LocPref'][relation]}")
-        writeLine(file, tn, "exit")
+    for rtr in network["routers"]:
+        if (rtr["AS"] == AS and border_router(network,rtr["ID"][0])):
+            for interface in rtr["interface"]:
+                if "Loopback" in interface["name"]:
+                    PEaddr.append(interface["address"][0])
+                
+    for interface in network["routers"][routerID-1]["interface"]:
+        if "Loopback" in interface["name"]:
+            routerLoopback = interface["name"]
     
-    # Out route-map
-    for relation in network["Constants"]["LocPref"] :
-        writeLine(file, tn, f"route-map {network['routers'][router-1]['AS']}_{relation}_out permit {int(network['Constants']['LocPref'][relation]/10)}")
-        writeLine(file, tn, f"match community {network['Constants']['LocPref'][relation]}")
-        writeLine(file, tn, "exit")
+    writeLine(file, tn, f"router bgp {AS}")
+    for nghaddr in PEaddr:
+        writeLine(file, tn, f"neighbor {nghaddr} remote-as {AS}")
+        writeLine(file, tn, f"neighbor {nghaddr} update-source {routerLoopback}")
 
-def config_router(network, routerID):
-    fileName = f"log{routerID}" #We create a logging file
-    if os.path.exists(fileName):
-        os.remove(fileName)
-    file = open(fileName, "x")
+    writeLine(file, tn, f"address-family vpnv4")
+    for nghaddr in PEaddr:
+        writeLine(file, tn, f"neighbor {nghaddr} activate")
+        writeLine(file, tn, f"neighbor {nghaddr} send-community both")
+        writeLine(file, tn, f"neighbor {nghaddr} route-reflector-client")
+
+def config_router(network, routerID,logsPath):
+    rsvp_bandwidth = network["Constants"]["Bandwidth"]
+    fileName = f"log{routerID}"  # We create a logging file
+    path = os.path.join(logsPath,fileName)
+    print(path)
+    if os.path.exists(path):
+        os.remove(path)
+    file = open(path, "x")
     file.close()
-    with open(fileName, "a") as file: #We open the logging file to write what we are sending to the router
-        port = network["routers"][routerID-1]["Port"]
+    with open(path, "a") as file:  # We open the logging file to write what we are sending to the router
+        port = network["routers"][routerID - 1]["Port"]
         host = "localhost"
         tn = telnetlib.Telnet(host, port)
+        writeLine(file, tn, "")
         writeLine(file, tn, "enable")
-        writeLine(file, tn, "write erase") #To erase current configuration
-        writeLine(file, tn, "") #To confirm the configuration deletion
-        tn.read_until(b"Erase of nvram: complete") #Waiting for the deletion to finish
+        writeLine(file, tn, "write erase")  # To erase current configuration
+        writeLine(file, tn, "")  # To confirm the configuration deletion
+        tn.read_until(b"Erase of nvram: complete")  # Waiting for the deletion to finish
         writeLine(file, tn, "conf t")
-        writeLine(file, tn, "ipv6 unicast-routing")
-        for interface in network["routers"][routerID-1]["interface"]:
+        writeLine(file, tn, f"hostname {network['routers'][routerID-1]['ID'][1]}")
+        if (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] == 1
+        ):
+            VRF(file, tn, network, routerID)
+        if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
+            MPLS(file, tn)
+        for interface in network["routers"][routerID - 1]["interface"]:
             if interface["neighbor"] != [] or "Loopback" in interface["name"]:
+                writeLine(file, tn, f"interface {interface['name']}")
+                if (network["routers"][routerID - 1]["AS"] == 1):
+                    RSVP(file, tn, rsvp_bandwidth)
+                    if border_interface(network, routerID, interface):
+                        router_client = interface["neighbor"][0]
+                        writeLine(file, tn, f"vrf forwarding Client_{network['AS'][network['routers'][router_client - 1]['AS'] - 1]['ClientID']}")
+                
                 addressing_if(file, tn, interface)
-                if "RIP" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
-                    RIP_if(file, tn, network, routerID, interface)
 
-                if "OSPF" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
-                    OSPF_if(file, tn, network,interface)
+                if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
+                    "IGP"
+                ] and not border_interface(network, routerID, interface):
+                    OSPF_if(file, tn, network, interface)
+
+                if "MPLS" in network["AS"][network["routers"][routerID - 1]["AS"] - 1][
+                    "IGP"
+                ] and not border_interface(network, routerID, interface):
+                    MPLS_if(file, tn, interface)
+
                 writeLine(file, tn, "no shutdown")
                 writeLine(file, tn, "exit")
-        
-        BGP(file, tn, network, routerID)
 
-        if "RIP" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
-            RIP(file, tn)
+        if (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] == 1
+        ):
+            BGP_Coeur(file, tn, network, routerID)
 
-        if "OSPF" in network["AS"][network["routers"][routerID-1]["AS"]-1]["IGP"]:
+        elif (
+            border_router(network, routerID)
+            and network["routers"][routerID - 1]["AS"] != 1
+        ):
+            BGP_Client(file, tn, network, routerID)
+
+        if "OSPF" in network["AS"][network["routers"][routerID - 1]["AS"] - 1]["IGP"]:
             OSPF(file, tn, network, routerID)
+
+        if routerID == network["Constants"]["RouteReflector"] :
+            routeReflector(network,file,tn)
+
         writeLine(file, tn, "end")
-        writeLine(file, tn, "write") #To write the configuration in order not to lose it the next time
-        tn.read_until(b"[OK]") #Waiting for the writing to complete
+        # To write the configuration in order not to lose it the next time
         tn.close()
