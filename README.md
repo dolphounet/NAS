@@ -1,9 +1,10 @@
 # NAS
 
 Les fonctionnalités implémentées sont : 
-- MPLS BGP VPN avec 2 clients
+- MPLS BGP VPN avec 3 clients
 - Bonus Route Reflector
-- Bonus Manipulation des Route Targets pour que certains clients communiquent entre eux et pas d'autres
+- Bonus Manipulation des Route Targets pour que certains clients communiquent entre eux et pas d'autres (Client A et Client B communiquent avec Client C mais pas entre eux)
+- Bonus RSVP (light)
   
 Le programme s'exécute avec TELNET. Pour que cela fonctionne :
 
