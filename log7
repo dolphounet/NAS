@@ -1,24 +1,0 @@
-
-enable
-write erase
-
-conf t
-interface GigabitEthernet1/0
-vrf forwarding Client_0
-ip address 100.100.17.2 255.255.255.0
-no shutdown
-exit
-interface Loopback1
-ip address 10.0.40.1 255.255.255.255
-no shutdown
-exit
-router bgp 4
-bgp router-id 7.7.7.7
-neighbor 100.100.17.1 remote-as 1
-address-family ipv4
-redistribute connected
-neighbor 100.100.17.1 activate
-exit-address-family
-exit
-end
-

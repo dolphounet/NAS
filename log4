@@ -1,65 +1,0 @@
-
-enable
-write erase
-
-conf t
-vrf definition Client_1
-rd 3:6
-route-target export 100:1
-route-target import 100:1
-route-target import 100:3
-address-family ipv4
-exit-address-family
-exit
-vrf definition Client_2
-rd 5:8
-route-target export 100:2
-route-target import 100:2
-route-target import 100:3
-address-family ipv4
-exit-address-family
-exit
-mpls ip
-mpls label protocol ldp
-interface GigabitEthernet1/0
-ip address 192.168.1.10 255.255.255.252
-ip ospf 10 area 0
-mpls ip
-no shutdown
-exit
-interface GigabitEthernet2/0
-vrf forwarding Client_1
-ip address 100.100.46.1 255.255.255.0
-no shutdown
-exit
-interface GigabitEthernet3/0
-vrf forwarding Client_2
-ip address 100.100.48.1 255.255.255.0
-no shutdown
-exit
-interface Loopback1
-ip address 10.0.10.4 255.255.255.255
-ip ospf 10 area 0
-mpls ip
-no shutdown
-exit
-router bgp 1
-bgp router-id 4.4.4.4
-neighbor 10.0.10.1 remote-as 1
-neighbor 10.0.10.1 update-source Loopback1
-address-family vpnv4
-neighbor 10.0.10.1 activate
-neighbor 10.0.10.1 send-community extended
-exit-address-family
-address-family ipv4 vrf Client_1
-neighbor 100.100.46.2 remote-as 3
-neighbor 100.100.46.2 activate
-address-family ipv4 vrf Client_2
-neighbor 100.100.48.2 remote-as 5
-neighbor 100.100.48.2 activate
-exit
-router ospf 10
-router-id 4.4.4.4
-exit
-end
-
