@@ -21,13 +21,13 @@
         },
         {
           "name": "GigabitEthernet4/0",
-          "neighbor": [9],
+          "neighbor": [],
           "address" : ["100.100.19.1","255.255.255.0"]
         },
         {
           "name": "FastEthernet0/0",
-          "neighbor": [],
-          "address" : ["",""]
+          "neighbor": [9],
+          "address" : ["100.100.19.1","255.255.255.0"]
         }
       ],
       "Port": 5001
